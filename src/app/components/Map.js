@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Tooltip } from 'react-tooltip'
 import SelectedInfo from './SelectedInfo';
+
+const maxArea = 50000; // square miles
 
 const Map = () => {
   const [geoJsonData, setGeoJsonData] = useState(null);
@@ -11,7 +14,9 @@ const Map = () => {
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
   const [area, setArea] = useState(0);
-  const maxArea = 10000; // square miles
+
+  // states for country size and adjacency validation
+  const [validationMessages, setValidationMessages] = useState([]);
 
   useEffect(() => {
     fetch('/counties.geojson')
@@ -54,6 +59,9 @@ const Map = () => {
         setArea(prevArea => prevArea + newTotalArea);
         newSelected.add(countyId);
       }
+
+      // Clear validation messages whenever a county is clicked
+      setValidationMessages([]);
 
       return newSelected;
     });
@@ -99,6 +107,25 @@ const Map = () => {
     console.log(Array.from(selectedCounties));
   };
 
+  const handleBuildClick = () => {
+    const messages = [];
+  
+    // Check for area size
+    if (area > maxArea) {
+      messages.push(`The selected area exceeds the maximum allowed size of ${maxArea} square miles.`);
+    }
+  
+    // Future validation checks can add more messages here...
+  
+    setValidationMessages(messages);
+  
+    // If there are no issues, proceed with the action
+    if (messages.length === 0) {
+      console.log(Array.from(selectedCounties));
+    }
+  };
+  
+
   return (
     <div>
     <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
@@ -114,7 +141,52 @@ const Map = () => {
       )}
       <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} />
     </MapContainer>
-    
+
+    <div style={{ 
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center', // Centers the children horizontally in the container
+  marginTop: '10px',
+}}>
+  <button
+    onClick={handleBuildClick}
+    style={{
+      backgroundColor: '#007bff',
+      color: 'white',
+      padding: '10px 20px',
+      border: 'none',
+      borderRadius: '5px',
+      fontSize: '16px',
+    }}
+  >
+    BUILD COUNTRY
+  </button>
+  {validationMessages.length > 0 && (
+    <div style={{
+      marginTop: '10px',
+      padding: '10px',
+      backgroundColor: '#ffdddd',
+      border: '1px solid #ffcccc',
+      borderRadius: '5px',
+      color: '#D8000C',
+      fontSize: '14px',
+      width: 'auto',
+      maxWidth: '400px', // Ensures the box doesn't grow too wide while still allowing it to be centered
+      display: 'flex', // This ensures that the content inside the div can also be aligned according to the flexbox rules
+      flexDirection: 'column', // Stacks the validation messages vertically
+      alignItems: 'center', // Centers the validation messages horizontally within the div
+    }}>
+      {validationMessages.map((message, index) => (
+        <div key={index}>{message}</div>
+      ))}
+    </div>
+  )}
+</div>
+
+      
+
+
+
     </div>
   );
 };
