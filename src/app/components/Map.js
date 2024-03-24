@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Tooltip } from 'react-tooltip'
 import SelectedInfo from './SelectedInfo';
 
 const maxArea = 50000; // square miles
@@ -10,6 +9,7 @@ const maxArea = 50000; // square miles
 const Map = () => {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedCounties, setSelectedCounties] = useState(new Set());
+  const [newCountry, setNewCountry] = useState(0);
 
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
@@ -116,18 +116,51 @@ const Map = () => {
     }
   
     // Future validation checks can add more messages here...
-  
     setValidationMessages(messages);
   
     // If there are no issues, proceed with the action
     if (messages.length === 0) {
-      console.log(Array.from(selectedCounties));
+      //console.log(Array.from(selectedCounties));
+      getCountry(Array.from(selectedCounties));
     }
   };
+
+  const getCountry = async (selectedCountyIds) => {
+    try {
+      const url = `http://127.0.0.1:6205/get_new_country`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({selected_county_ids: selectedCountyIds}),
+      });
+      if (!response.ok) {
+        // If the server response is not OK, attempt to read the error message
+        const errorData = await response.json(); // Assume the server sends back an object with an "error" key
+        console.log(errorData);
+        throw new Error(errorData.error || 'Unknown error occurred'); // Use the server's error message or a default one
+      }
+      
+      const data = await response.json();
+      setGeoJsonData(data); // Update the geoJsonData state with the new data
+      setNewCountry(1);
+      console.log(data);
+    } catch (error) {
+      console.error('Error:', error.message);
+    
+      // Update the validationMessages state with the new error message
+      setValidationMessages([error.message]);
+    }
+  };
+
+  
   
 
   return (
     <div>
+
+    {!newCountry && (
     <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -141,6 +174,25 @@ const Map = () => {
       )}
       <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} />
     </MapContainer>
+    )}
+
+{
+  newCountry && (
+    <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {geoJsonData && (
+        <GeoJSON
+          data={geoJsonData}
+          style={(feature) => getStyle(feature, selectedCounties.has(feature.properties.GEOID))}
+          onEachFeature={onEachFeature}
+        />
+      )}
+      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} />
+    </MapContainer>
+  )
+}
 
     <div style={{ 
   display: 'flex',
@@ -181,13 +233,12 @@ const Map = () => {
       ))}
     </div>
   )}
+
 </div>
 
-      
-
-
-
     </div>
+
+    
   );
 };
 
