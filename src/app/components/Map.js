@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import SelectedInfo from './SelectedInfo';
+import CountryInfo from './CountryInfo';
+import EconomicInfo from './EconomicInfo';
 
 const maxArea = 50000; // square miles
 
@@ -17,6 +19,11 @@ const Map = () => {
 
   // states for country size and adjacency validation
   const [validationMessages, setValidationMessages] = useState([]);
+
+  // state for new country stats
+  const [countryStats, setCountryStats] = useState({});
+  const [populationBlack, setPopulationBlack] = useState(0);
+
 
   useEffect(() => {
     fetch('/counties.geojson')
@@ -143,7 +150,8 @@ const Map = () => {
       }
       
       const data = await response.json();
-      setGeoJsonData(data); // Update the geoJsonData state with the new data
+      setGeoJsonData(data.geojson); 
+      setCountryStats(data.stats);
       setNewCountry(1);
       console.log(data);
     } catch (error) {
@@ -189,7 +197,8 @@ const Map = () => {
           onEachFeature={onEachFeature}
         />
       )}
-      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} />
+      <CountryInfo newCountryStats={countryStats} />
+      <EconomicInfo newCountryStats={countryStats} />
     </MapContainer>
   )
 }
