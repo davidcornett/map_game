@@ -1,8 +1,6 @@
 import React from 'react';
 
-const maxArea = 50000; // square miles
-
-const SelectedInfo = ({ selectedCounty, selectedCount, totalArea }) => {
+const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea }) => {
     return (
     <div style={{
     position: 'absolute',

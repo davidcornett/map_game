@@ -6,12 +6,33 @@ import SelectedInfo from './SelectedInfo';
 import CountryInfo from './CountryInfo';
 import EconomicInfo from './EconomicInfo';
 
-const maxArea = 50000; // square miles
+const countrySizes = {
+  small: {
+    maxSize: 25000, // Example max size for a small country in square miles
+    description: "Up to 25,000 square miles",
+    image: "/netherlands-green.svg",
+    name: "The Netherlands (small)"
+  },
+  medium: {
+    maxSize: 100000,
+    description: "Up to 100,000 square miles",
+    image: "/vietnam-green.svg",
+    name: "Vietnam (medium)"
+  },
+  large: {
+    maxSize: 350000,
+    description: "Up to 350,000 square miles",
+    image: "/nigeria-green.svg",
+    name: "Nigeria (large)"
+  }
+};
 
 const Map = () => {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedCounties, setSelectedCounties] = useState(new Set());
   const [newCountry, setNewCountry] = useState(0);
+  const [selectedSize, setSelectedSize] = useState('small');
+  const [maxArea, setMaxArea] = useState(countrySizes.small.maxSize); // square miles
 
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
@@ -45,7 +66,6 @@ const Map = () => {
       return 0; // Return 0 in case of error
     }
   };
-
 
   const toggleCountySelection = async (countyId) => {
     const area = await fetchArea(countyId);
@@ -108,10 +128,9 @@ const Map = () => {
     };
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO
-    console.log(Array.from(selectedCounties));
+  const handleSizeSelection = (size) => {
+    setSelectedSize(size);
+    setMaxArea(countrySizes[size].maxSize);
   };
 
   const handleBuildClick = () => {
@@ -135,12 +154,17 @@ const Map = () => {
   const getCountry = async (selectedCountyIds) => {
     try {
       const url = `http://127.0.0.1:6205/get_new_country`;
+      const body = JSON.stringify({ 
+        selected_county_ids: selectedCountyIds,
+        maxArea: maxArea
+      });
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({selected_county_ids: selectedCountyIds}),
+        body: body
       });
       if (!response.ok) {
         // If the server response is not OK, attempt to read the error message
@@ -161,13 +185,55 @@ const Map = () => {
       setValidationMessages([error.message]);
     }
   };
-
   
+  const sizeButtonStyle = (size) => ({
+    backgroundColor: selectedSize === size ? 'rgb(40, 44, 52)' : 'rgb(20, 22, 28)', // Darker for selected size
+    color: 'white',
+    padding: '1em 1.2em',
+    border: 'none',
+    borderRadius: '0.5em',
+    fontSize: '1em',
+    cursor: 'pointer',
+    margin: '0.5em',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 'auto',
+    maxWidth: '100%',
+  });
+  
+  const sizeTextStyle = {
+    marginRight: 'auto',
+    textAlign: 'left', // Ensure text aligns to the left, useful if the button width grows
+  };
+  
+  const sizeImageStyle = {
+    width: '3em',
+    height: 'auto',
+    marginLeft: '1em',
+  };
+  
+  const buttonContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: '1em',
+  };
   
 
   return (
     <div>
-
+      <div style={buttonContainerStyle}>
+        {Object.entries(countrySizes).map(([size, { description, image, name }]) => (
+          <button key={size} onClick={() => handleSizeSelection(size)} style={sizeButtonStyle(size)}>
+            <div style={sizeTextStyle}>
+              <h4 style={{margin: 0}}>{name}</h4>
+              <p style={{margin: 0, fontSize: 12}}>{description}</p> 
+            </div>
+            <img src={image} alt={`${name} map`} style={sizeImageStyle} />
+          </button>
+        ))}
+      </div>
     {!newCountry && (
     <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
       <TileLayer
@@ -180,7 +246,7 @@ const Map = () => {
           onEachFeature={onEachFeature}
         />
       )}
-      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} />
+      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} />
     </MapContainer>
     )}
 

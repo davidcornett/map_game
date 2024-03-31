@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Map from './components/Map';
+import Instructions from "./components/Instructions";
 
 export default function Home() {
   return (
     <div>
-      <h1>My Page</h1>
+      <Instructions />
       <Map />
     </div>
 
