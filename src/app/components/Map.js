@@ -187,7 +187,7 @@ const Map = () => {
   };
   
   const sizeButtonStyle = (size) => ({
-    backgroundColor: selectedSize === size ? 'rgb(40, 44, 52)' : 'rgb(20, 22, 28)', // Darker for selected size
+    backgroundColor: selectedSize === size ? 'rgb(40, 44, 52)' : 'rgb(20, 22, 28)',
     color: 'white',
     padding: '1em 1.2em',
     border: 'none',
