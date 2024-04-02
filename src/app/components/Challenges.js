@@ -1,8 +1,10 @@
 // components/Challenges.js
 import React, { useEffect, useState } from 'react';
+import { useSelectedChallenge } from '../SelectedChallengeContext';
 
-const Challenges = ({ onChallengeSelect, selectedChallenge }) => {
+const Challenges = () => {
     const [challenges, setChallenges] = useState([]);
+    const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
 
     useEffect(() => {
         const fetchChallenges = async () => {
@@ -23,11 +25,7 @@ const Challenges = ({ onChallengeSelect, selectedChallenge }) => {
     }, []);
 
     const handleSelectChallenge = (challenge) => {
-        if (onChallengeSelect) {
-            console.log("Selected challenge:", challenge.challenge_id);
-            // Placeholder for showing leaderboard and initiating challenge on the map
-            onChallengeSelect(challenge);
-        }
+        setSelectedChallenge(challenge);
     };
 
     // Function to determine image based on challenge criteria

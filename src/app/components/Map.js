@@ -6,6 +6,8 @@ import SelectedInfo from './SelectedInfo';
 import CountryInfo from './CountryInfo';
 import EconomicInfo from './EconomicInfo';
 import ChallengeResult from './ChallengeResult';
+import { useSelectedChallenge } from '../SelectedChallengeContext';
+
 
 const countrySizes = {
   small: {
@@ -44,6 +46,8 @@ const Map = ({ mode } ) => {
 
   // state for new country stats
   const [countryStats, setCountryStats] = useState({});
+
+  const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
 
 
   useEffect(() => {
