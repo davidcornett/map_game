@@ -4,17 +4,20 @@ import Map from './components/Map';
 import Instructions from "./components/Instructions";
 import ModeSelection from './components/ModeSelection';
 import Challenges from './components/Challenges'; 
+import { SelectedChallengeProvider, useSelectedChallenge } from './SelectedChallengeContext';
 
-export default function Home() {
+
+export default function setChallengeContext() {
+  return (
+    <SelectedChallengeProvider>
+      <Home />
+    </SelectedChallengeProvider>
+  );
+}
+
+function Home() {
+  const { selectedChallenge } = useSelectedChallenge(); 
   const [mode, setMode] = useState('sandbox');
-  const [selectedChallenge, setSelectedChallenge] = useState(null);
-
-  const handleChallengeSelect = (challenge) => {
-    setSelectedChallenge(challenge);
-    // Here you can also set up any additional UI changes or preparations,
-    // such as showing the leaderboard or configuring the map for the challenge.
-  };
-  
 
   const sandboxStyle = {
     backgroundColor: '#f0f0f0',
@@ -60,9 +63,7 @@ export default function Home() {
 
       </div>
       <div>
-      {mode === 'challenge' && 
-      <Challenges onChallengeSelect={handleChallengeSelect} selectedChallenge={selectedChallenge} />}
-
+      {mode === 'challenge' && <Challenges />}
       {mode === 'sandbox' && <Map mode={mode} />}
       {mode === 'challenge' && selectedChallenge && <Map mode={mode} />}
       </div>
