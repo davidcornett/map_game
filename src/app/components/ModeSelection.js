@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from 'react';
+import { useSelectedChallenge } from '../SelectedChallengeContext';
 
 const ModeSelection = ({ mode, setMode }) => {
+
+    const { setSelectedChallenge } = useSelectedChallenge();
     
     const buttonStyle = {
         backgroundColor: 'rgb(20, 22, 28)',
@@ -29,7 +32,10 @@ const ModeSelection = ({ mode, setMode }) => {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
             <button
-                onClick={() => setMode('sandbox')}
+                onClick={() => {
+                    setMode('sandbox');
+                    setSelectedChallenge(null);
+                }}
                 style={mode === 'sandbox' ? activeButtonStyle : buttonStyle}
             >
                 Sandbox Mode

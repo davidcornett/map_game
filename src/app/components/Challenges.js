@@ -105,31 +105,42 @@ const Challenges = () => {
     gap: '1em',
     };
 */
+
+
+    const groupedChallenges = challenges.reduce((acc, challenge) => {
+        // Initialize the array for the challenge name if it doesn't already exist
+        if (!acc[challenge.name]) {
+            acc[challenge.name] = [];
+        }
+        // Add the challenge to its respective group
+        acc[challenge.name].push(challenge);
+        return acc;
+    }, {});
+
     return (
         <div style={outerContainerStyle}>
             <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Available Challenges</h2>
             <div style={buttonContainerStyle}>
-                {challenges.map((challenge) => (
-                    <button 
-                    key={challenge.id} 
-                    style={buttonStyle(challenge)} 
-                    onClick={() => handleSelectChallenge(challenge)}
+                {Object.entries(groupedChallenges).map(([name, challengesGroup]) => (
+                    <button
+                        key={name}
+                        style={buttonStyle(challengesGroup[0])} // Apply styling as before, using the first challenge for reference
+                        onClick={() => handleSelectChallenge(challengesGroup[0])} // Modify to handle group selection if needed
                     >
-                        <span style={textStyle}>{challenge.name}</span>
-                        {/* Dynamically set the image source based on the challenge's criteria_type */}
-                        {getImageSrcForChallenge(challenge.criteria.criteria_type) && (
-                            <img 
-                            src={getImageSrcForChallenge(challenge.criteria.criteria_type)} 
-                            alt={challenge.name} 
-                            style={imageStyle} 
+                        <span style={textStyle}>{name}</span>
+                        {getImageSrcForChallenge(challengesGroup[0].criteria.criteria_type) && (
+                            <img
+                                src={getImageSrcForChallenge(challengesGroup[0].criteria.criteria_type)}
+                                alt={name}
+                                style={imageStyle}
                             />
                         )}
                     </button>
                 ))}
             </div>
         </div>
-      );
-      
+    );
+    
 
 };
 

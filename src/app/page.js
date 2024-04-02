@@ -55,7 +55,7 @@ function Home() {
     <>
       <div style={containerStyle}>
           <div style={instructionsStyle}>
-              <Instructions />
+          <Instructions />
           </div>
           <div style={modeSelectionStyle}>
               <ModeSelection mode={mode} setMode={setMode}/>
