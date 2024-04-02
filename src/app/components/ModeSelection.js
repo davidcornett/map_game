@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 
 const ModeSelection = ({ mode, setMode }) => {
-
+    
     const buttonStyle = {
         backgroundColor: 'rgb(20, 22, 28)',
         color: 'white',

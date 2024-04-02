@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import SelectedInfo from './SelectedInfo';
 import CountryInfo from './CountryInfo';
 import EconomicInfo from './EconomicInfo';
+import ChallengeResult from './ChallengeResult';
 
 const countrySizes = {
   small: {
@@ -27,7 +28,7 @@ const countrySizes = {
   }
 };
 
-const Map = () => {
+const Map = ({ mode } ) => {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedCounties, setSelectedCounties] = useState(new Set());
   const [newCountry, setNewCountry] = useState(0);
@@ -43,7 +44,6 @@ const Map = () => {
 
   // state for new country stats
   const [countryStats, setCountryStats] = useState({});
-  const [populationBlack, setPopulationBlack] = useState(0);
 
 
   useEffect(() => {
@@ -177,7 +177,7 @@ const Map = () => {
       setGeoJsonData(data.geojson); 
       setCountryStats(data.stats);
       setNewCountry(1);
-      console.log(data);
+
     } catch (error) {
       console.error('Error:', error.message);
     
@@ -263,8 +263,14 @@ const Map = () => {
           onEachFeature={onEachFeature}
         />
       )}
-      <CountryInfo newCountryStats={countryStats} />
-      <EconomicInfo newCountryStats={countryStats} />
+        {mode === 'challenge' ? (
+         <ChallengeResult newCountryStats={countryStats} maxArea={maxArea} /> // Render ChallengeResult in challenge mode
+        ) : (
+          <>
+            <CountryInfo newCountryStats={countryStats} />
+            <EconomicInfo newCountryStats={countryStats} />
+          </>
+        )}
     </MapContainer>
   )
 }

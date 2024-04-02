@@ -3,9 +3,18 @@ import React, { useState } from 'react';
 import Map from './components/Map';
 import Instructions from "./components/Instructions";
 import ModeSelection from './components/ModeSelection';
+import Challenges from './components/Challenges'; 
 
 export default function Home() {
   const [mode, setMode] = useState('sandbox');
+  const [selectedChallenge, setSelectedChallenge] = useState(null);
+
+  const handleChallengeSelect = (challenge) => {
+    setSelectedChallenge(challenge);
+    // Here you can also set up any additional UI changes or preparations,
+    // such as showing the leaderboard or configuring the map for the challenge.
+  };
+  
 
   const sandboxStyle = {
     backgroundColor: '#f0f0f0',
@@ -38,9 +47,6 @@ export default function Home() {
       margin: '10px', // Adds some space around the buttons
   };
 
-  const handleModeChange = (mode) => {
-    setCurrentMode(mode);
-};
 
   return (
     <>
@@ -54,7 +60,11 @@ export default function Home() {
 
       </div>
       <div>
-      {mode === 'sandbox' && <Map />}
+      {mode === 'challenge' && 
+      <Challenges onChallengeSelect={handleChallengeSelect} selectedChallenge={selectedChallenge} />}
+
+      {mode === 'sandbox' && <Map mode={mode} />}
+      {mode === 'challenge' && selectedChallenge && <Map mode={mode} />}
       </div>
     </>
 );

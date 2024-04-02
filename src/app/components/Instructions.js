@@ -17,7 +17,7 @@ const Instructions = () => {
     return (
         <div> 
             <div style={cardStyle}>
-                <h2 style={headingStyle}>Build a new country from a unique canvas - US counties.</h2>
+                <h2 className="text-5xl font-bold" style={headingStyle}>Build your country from a unique canvas - US counties.</h2>
                 <ul>
                     <li>Click any county to start, and build up from there.</li>
                     <li>Keep the square mile limit in mind.</li>
