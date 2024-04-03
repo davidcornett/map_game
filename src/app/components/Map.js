@@ -268,7 +268,7 @@ const Map = ({ mode } ) => {
         />
       )}
         {mode === 'challenge' ? (
-         <ChallengeResult newCountryStats={countryStats} maxArea={maxArea} /> // Render ChallengeResult in challenge mode
+         <ChallengeResult newCountryStats={countryStats} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
         ) : (
           <>
             <CountryInfo newCountryStats={countryStats} />

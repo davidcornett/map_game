@@ -1,41 +1,62 @@
 import React, { useState, useEffect } from 'react';
+import { useSelectedChallenge } from '../SelectedChallengeContext';
 
-const ChallengeResult = ({ challengeName, newCountryStats, maxArea }) => {
+const ChallengeResult = ({ newCountryStats, maxArea }) => {
   const [leaderboard, setLeaderboard] = useState([]);
+  const { selectedChallenge } = useSelectedChallenge(); // Access the selected challenge from context
 
   const getLeaderboard = async () => {
-    try {
-      const url = `http://127.0.0.1:6205/leaderboard`; // Adjust this URL as necessary
-      // Assuming `maxArea` is part of `newCountryStats`
+    if (!selectedChallenge) return; // Ensure there is a selected challenge
 
-      const body = JSON.stringify({
-        name: challengeName, // Use challengeName from props
-        maxArea: maxArea, 
+    try {
+      // Adjusted to use selectedChallenge from context
+      const params = new URLSearchParams({
+        name: selectedChallenge.name,
+        maxArea: maxArea 
       });
 
-      const response = await fetch(url, {
-        method: 'POST',
+      const response = await fetch(`http://127.0.0.1:6205/leaderboard?${params.toString()}`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: body,
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json();
       setLeaderboard(data);
     } catch (error) {
-      console.error('Error fetching leaderboard data:', error);
+      console.error("Could not fetch leaderboard:", error);
     }
   };
 
-  // Invoke getLeaderboard when component mounts or when challengeName/newCountryStats changes
+  // Automatically refresh leaderboard when the selectedChallenge changes
   useEffect(() => {
     getLeaderboard();
-  }, [challengeName, newCountryStats]); // Updated to use challengeName instead of challengeId
+  }, [selectedChallenge]); // React to changes in selectedChallenge
+
+  // Dynamic metric display based on selectedChallenge
+  const metricDisplay = selectedChallenge?.criteria?.criteria_type.toUpperCase() || 'SCORE';
+
+  // returns the key in the newCountryStats object for the selected challenge's criteria
+  const getStatKeyForCriteria = (criteriaType) => {
+    const criteriaToStatKeyMap = {
+      population: 'total_population',
+      perCapIncome: 'perCapIncome',
+      unemploymentRate: 'unemploymentRate',
+      gdp: 'gdp',
+      // todo - add more as needed
+    };
+  
+    return criteriaToStatKeyMap[criteriaType] || null;
+  };
+  
+  // get user's country metric based on challenge's metric
+  const statKey = getStatKeyForCriteria(selectedChallenge?.criteria?.criteria_type);
+  const userScore = newCountryStats?.[statKey] || 'N/A';
 
   return (
     <div style={{
@@ -56,11 +77,13 @@ const ChallengeResult = ({ challengeName, newCountryStats, maxArea }) => {
       flexDirection: 'column',
       alignItems: 'flex-start',
     }}>
-      <h3>GDP: ${newCountryStats.gdp} Billion</h3>
+      {/* Display dynamic metric */}
+      <h4>Player Score</h4>
+      <h3>{metricDisplay}: {userScore.toLocaleString()}</h3>
       <h4>Leaderboard</h4>
       <ul>
         {leaderboard.map((entry, index) => (
-          <li key={index}>{entry.display_name}: ${entry.score} Billion</li>
+          <li key={index}>{entry.display_name}: {entry.score.toLocaleString()}</li>
         ))}
       </ul>
     </div>
@@ -68,4 +91,3 @@ const ChallengeResult = ({ challengeName, newCountryStats, maxArea }) => {
 };
 
 export default ChallengeResult;
-
