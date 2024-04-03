@@ -1,8 +1,7 @@
-// components/Challenges.js
 import React, { useEffect, useState } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
 
-const Challenges = () => {
+const Challenges = ({ maxArea }) => {
     const [challenges, setChallenges] = useState([]);
     const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
 
@@ -24,8 +23,18 @@ const Challenges = () => {
         fetchChallenges();
     }, []);
 
-    const handleSelectChallenge = (challenge) => {
-        setSelectedChallenge(challenge);
+    const handleSelectChallenge = (challengesGroup) => {
+        const matchingChallenge = challengesGroup.find(challenge => challenge.max_area === maxArea);
+        console.log(challengesGroup)
+        if (matchingChallenge) {
+            console.log("match")
+            // If a matching challenge is found, set it as the selected challenge
+            setSelectedChallenge(matchingChallenge);
+          } else {
+            // Optionally handle the case where no challenge matches the selectedMaxArea
+            console.error("No challenge found for the selected area size.");
+            // This might involve setting an error state, displaying a message to the user, etc.
+          }
     };
 
     // Function to determine image based on challenge criteria
@@ -41,8 +50,8 @@ const Challenges = () => {
     };
 
     // Button style based on whether the challenge is selected
-    const buttonStyle = (challenge) => ({
-        backgroundColor: selectedChallenge && selectedChallenge.challenge_id === challenge.challenge_id ? 'rgb(60, 66, 72)' : 'rgb(40, 44, 52)',
+    const buttonStyle = (challengeName) => ({
+        backgroundColor: selectedChallenge && selectedChallenge.name === challengeName ? 'rgb(60, 66, 72)' : 'rgb(40, 44, 52)',
         //backgroundColor: selectedChallenge && selectedChallenge.challenge_id === challenge.challenge_id ? 'rgb(40, 44, 52)' : '#05386B',
 
         color: 'white',
@@ -96,16 +105,6 @@ const Challenges = () => {
     gap: '1em', // Space between buttons
     width: '100%', // Take the full width of the outer container
     };
-      
-        /*
-    const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    gap: '1em',
-    };
-*/
-
 
     const groupedChallenges = challenges.reduce((acc, challenge) => {
         // Initialize the array for the challenge name if it doesn't already exist
@@ -119,13 +118,13 @@ const Challenges = () => {
 
     return (
         <div style={outerContainerStyle}>
-            <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Available Challenges</h2>
+            <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Select a Challenge</h2>
             <div style={buttonContainerStyle}>
                 {Object.entries(groupedChallenges).map(([name, challengesGroup]) => (
                     <button
                         key={name}
-                        style={buttonStyle(challengesGroup[0])} // Apply styling as before, using the first challenge for reference
-                        onClick={() => handleSelectChallenge(challengesGroup[0])} // Modify to handle group selection if needed
+                        style={buttonStyle(name)} // Apply styling as before, using the first challenge for reference
+                        onClick={() => handleSelectChallenge(challengesGroup)} // Modify to handle group selection if needed
                     >
                         <span style={textStyle}>{name}</span>
                         {getImageSrcForChallenge(challengesGroup[0].criteria.criteria_type) && (

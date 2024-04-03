@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
 
-const ChallengeResult = ({ newCountryStats, maxArea }) => {
+const ChallengeResult = ({ userScore, maxArea }) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const { selectedChallenge } = useSelectedChallenge(); // Access the selected challenge from context
 
@@ -41,22 +41,6 @@ const ChallengeResult = ({ newCountryStats, maxArea }) => {
   // Dynamic metric display based on selectedChallenge
   const metricDisplay = selectedChallenge?.criteria?.criteria_type.toUpperCase() || 'SCORE';
 
-  // returns the key in the newCountryStats object for the selected challenge's criteria
-  const getStatKeyForCriteria = (criteriaType) => {
-    const criteriaToStatKeyMap = {
-      population: 'total_population',
-      perCapIncome: 'perCapIncome',
-      unemploymentRate: 'unemploymentRate',
-      gdp: 'gdp',
-      // todo - add more as needed
-    };
-  
-    return criteriaToStatKeyMap[criteriaType] || null;
-  };
-  
-  // get user's country metric based on challenge's metric
-  const statKey = getStatKeyForCriteria(selectedChallenge?.criteria?.criteria_type);
-  const userScore = newCountryStats?.[statKey] || 'N/A';
 
   return (
     <div style={{
