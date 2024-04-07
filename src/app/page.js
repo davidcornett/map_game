@@ -62,10 +62,8 @@ function Home() {
           </div>
 
       </div>
-      <div>
-      {mode === 'challenge' && <Challenges />}
-      {mode === 'sandbox' && <Map mode={mode} />}
-      {mode === 'challenge' && selectedChallenge && <Map mode={mode} />}
+      <div> 
+      <Map mode={mode} />
       </div>
     </>
 );

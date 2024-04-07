@@ -17,13 +17,13 @@ function formatGDP(gdp) {
     }
 
     if (gdp >= 1e12) {
-        return format(gdp, 1e12, "T");
+        return format(gdp, 1e12, " Trillion");
     } else if (gdp >= 1e9) {
-        return format(gdp, 1e9, "B");
+        return format(gdp, 1e9, " Billion");
     } else if (gdp >= 1e6) {
-        return format(gdp, 1e6, "M");
+        return format(gdp, 1e6, " Million");
     } else if (gdp >= 1e3) {
-        return format(gdp, 1e3, "K");
+        return format(gdp, 1e3, " Thousand");
     } else {
         return `${gdp}`;
     }
@@ -69,4 +69,5 @@ const EconomicInfo = ({ newCountryStats }) => {
     );
 }
 
+export { formatGDP };
 export default EconomicInfo;

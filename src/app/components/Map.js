@@ -6,6 +6,7 @@ import SelectedInfo from './SelectedInfo';
 import CountryInfo from './CountryInfo';
 import EconomicInfo from './EconomicInfo';
 import ChallengeResult from './ChallengeResult';
+import Challenges from './Challenges'; 
 import { useSelectedChallenge } from '../SelectedChallengeContext';
 
 
@@ -48,6 +49,8 @@ const Map = ({ mode } ) => {
   const [countryStats, setCountryStats] = useState({});
 
   const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
+  const [displayName, setDisplayName] = useState('');
+  const [userScore, setUserScore] = useState(null);
 
 
   useEffect(() => {
@@ -156,12 +159,18 @@ const Map = ({ mode } ) => {
   };
 
   const getCountry = async (selectedCountyIds) => {
+    const statKey = getStatKeyForCriteria(selectedChallenge?.criteria?.criteria_type);
+
     try {
       const url = `http://127.0.0.1:6205/get_new_country`;
       const body = JSON.stringify({ 
         selected_county_ids: selectedCountyIds,
-        maxArea: maxArea
+        maxArea: maxArea,
+        displayName: displayName.trim() || generateRandomName(),
+        challenge: selectedChallenge,
+        statKey: statKey
       });
+      console.log(statKey);
 
       const response = await fetch(url, {
         method: 'POST',
@@ -180,6 +189,9 @@ const Map = ({ mode } ) => {
       const data = await response.json();
       setGeoJsonData(data.geojson); 
       setCountryStats(data.stats);
+      
+      //const score = data.stats?.[statKey] || 'N/A'; // Update the user's score based on the new country's stats
+      setUserScore(data.stats.challengeScore);
       setNewCountry(1);
 
     } catch (error) {
@@ -191,7 +203,8 @@ const Map = ({ mode } ) => {
   };
   
   const sizeButtonStyle = (size) => ({
-    backgroundColor: selectedSize === size ? 'rgb(40, 44, 52)' : 'rgb(20, 22, 28)',
+    backgroundColor: selectedSize === size ? 'rgb(60, 66, 72)' : 'rgb(40, 44, 52)',
+    //backgroundColor: selectedSize === size ? 'rgb(40, 44, 52)' : 'rgb(20, 22, 28)',
     color: 'white',
     padding: '1em 1.2em',
     border: 'none',
@@ -223,22 +236,58 @@ const Map = ({ mode } ) => {
     flexWrap: 'wrap',
     gap: '1em',
   };
+
+  const outerContainerStyle = {
+    backgroundColor: 'rgb(20, 22, 28)',
+    borderRadius: '10px', // Rounded edges for the container
+    padding: '20px', // Padding inside the container, around the heading and buttons
+    margin: '20px auto', // Margin for top, bottom, and auto on the sides for center alignment
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+    display: 'flex',
+    flexDirection: 'column', // Stack children vertically
+    alignItems: 'center', // Center-align children
+    gap: '1em', // Space between children
+    width: '80%', // Adjust width as necessary
+    maxWidth: '100%', // Ensure the container does not exceed the width of its parent
+  };
   
+  // returns the key in the CountryStats object for the selected challenge's criteria
+  const getStatKeyForCriteria = (criteriaType) => {
+    const criteriaToStatKeyMap = {
+      population: 'total_population',
+      perCapIncome: 'perCapIncome',
+      unemploymentRate: 'unemploymentRate',
+      gdp: 'gdp',
+      // todo - add more as needed
+    };
+  
+    return criteriaToStatKeyMap[criteriaType] || null;
+  };
+  
+  // Function to generate a random display name (simplified example)
+  const generateRandomName = () => `User_${Math.floor(Math.random() * 1000)}`;
 
   return (
     <div>
-      <div style={buttonContainerStyle}>
-        {Object.entries(countrySizes).map(([size, { description, image, name }]) => (
-          <button key={size} onClick={() => handleSizeSelection(size)} style={sizeButtonStyle(size)}>
-            <div style={sizeTextStyle}>
-              <h4 style={{margin: 0}}>{name}</h4>
-              <p style={{margin: 0, fontSize: 12}}>{description}</p> 
-            </div>
-            <img src={image} alt={`${name} map`} style={sizeImageStyle} />
-          </button>
-        ))}
+      <div style={outerContainerStyle}>
+        <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Choose Country Size </h2>
+
+        <div style={buttonContainerStyle}>
+          {Object.entries(countrySizes).map(([size, { description, image, name }]) => (
+            <button key={size} onClick={() => handleSizeSelection(size)} style={sizeButtonStyle(size)}>
+              <div style={sizeTextStyle}>
+                <h4 style={{margin: 0}}>{name}</h4>
+                <p style={{margin: 0, fontSize: 12}}>{description}</p> 
+              </div>
+              <img src={image} alt={`${name} map`} style={sizeImageStyle} />
+            </button>
+          ))}
+        </div>
       </div>
-    {!newCountry && (
+
+    {mode === 'challenge' && <Challenges maxArea={maxArea} />}
+
+    {!newCountry && ( mode === 'sandbox' || selectedChallenge) && (
     <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -268,7 +317,7 @@ const Map = ({ mode } ) => {
         />
       )}
         {mode === 'challenge' ? (
-         <ChallengeResult newCountryStats={countryStats} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
+         <ChallengeResult userScore={userScore} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
         ) : (
           <>
             <CountryInfo newCountryStats={countryStats} />
@@ -285,6 +334,26 @@ const Map = ({ mode } ) => {
   alignItems: 'center', // Centers the children horizontally in the container
   marginTop: '10px',
 }}>
+
+{selectedChallenge && (
+  <input
+    type="text"
+    placeholder="Enter name for leaderboard (optional)"
+    value={displayName}
+    onChange={(e) => setDisplayName(e.target.value)}
+    style={{
+      width: '50%', // Make input take the full width of its parent container
+      padding: '10px', // Add some padding for visual comfort
+      margin: '10px 0', // Add some margin above and below the input
+      color: 'black', // Ensure text color is visible against the input's background
+      backgroundColor: 'white', // A light background color for the input
+      border: '1px solid #ccc', // A subtle border
+      borderRadius: '4px', // Slightly rounded corners
+    }}
+  />
+)
+}
+  { (mode === 'sandbox' || selectedChallenge) && (
   <button
     onClick={handleBuildClick}
     style={{
@@ -298,6 +367,7 @@ const Map = ({ mode } ) => {
   >
     BUILD COUNTRY
   </button>
+  )}
   {validationMessages.length > 0 && (
     <div style={{
       marginTop: '10px',
