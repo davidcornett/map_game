@@ -15,3 +15,17 @@ export const SelectedChallengeProvider = ({ children }) => {
 };
 
 
+// New NewCountryContext
+const NewCountryContext = createContext();
+
+export const useNewCountry = () => useContext(NewCountryContext);
+
+export const NewCountryProvider = ({ children }) => {
+    const [newCountry, setNewCountry] = useState(null);
+
+    return (
+        <NewCountryContext.Provider value={{ newCountry, setNewCountry }}>
+            {children}
+        </NewCountryContext.Provider>
+    );
+};
