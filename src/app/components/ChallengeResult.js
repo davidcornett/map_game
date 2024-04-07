@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
+import { formatGDP } from './EconomicInfo'; // Import the formatGDP function from EconomicInfo.js
+
+function toTitleCase(str) {
+  return str
+    .toLowerCase()  // First, make all characters lowercase
+    .split(' ')  // Split the string into an array of words
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize the first character of each word
+    .join(' ');  // Join the words back into a string
+}
+
 
 const ChallengeResult = ({ userScore, maxArea }) => {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -7,6 +17,7 @@ const ChallengeResult = ({ userScore, maxArea }) => {
 
   const getLeaderboard = async () => {
     if (!selectedChallenge) return; // Ensure there is a selected challenge
+    console.log(selectedChallenge)
 
     try {
       // Adjusted to use selectedChallenge from context
@@ -39,8 +50,19 @@ const ChallengeResult = ({ userScore, maxArea }) => {
   }, [selectedChallenge]); // React to changes in selectedChallenge
 
   // Dynamic metric display based on selectedChallenge
-  const metricDisplay = selectedChallenge?.criteria?.criteria_type.toUpperCase() || 'SCORE';
+  const metricDisplay = toTitleCase(selectedChallenge?.criteria?.criteria_type.toUpperCase() || 'SCORE');
 
+  function displayScore(score) {
+    // Check if the challenge is a GDP challenge
+    if (selectedChallenge.criteria.criteria_type === 'gdp') {
+      // Format the score as GDP
+      return formatGDP(score);
+    } else {
+      // For other types of scores, return as is or format differently
+      return score.toLocaleString(); // Basic formatting to include commas in large numbers
+    }
+  }
+  
 
   return (
     <div style={{
@@ -61,15 +83,27 @@ const ChallengeResult = ({ userScore, maxArea }) => {
       flexDirection: 'column',
       alignItems: 'flex-start',
     }}>
-      {/* Display dynamic metric */}
-      <h4>Player Score</h4>
-      <h3>{metricDisplay}: {userScore.toLocaleString()}</h3>
-      <h4>Leaderboard</h4>
-      <ul>
-        {leaderboard.map((entry, index) => (
-          <li key={index}>{entry.display_name}: {entry.score.toLocaleString()}</li>
+      <h4 className='text-2xl font-bold text-customTeal'>Challenge Results</h4>
+      <h3>{metricDisplay} Score: <span className="font-semibold text-customTeal">{userScore.toLocaleString()}</span></h3>
+      <h3>Challenge: <span className="font-semibold text-customTeal">{selectedChallenge.name}</span></h3>
+      <h3>Allowed Area (sq. miles): <span className="font-semibold text-customTeal">{selectedChallenge.max_area.toLocaleString()}</span></h3>
+
+
+      <div className="w-full max-w-xl mx-auto">
+      <h4 className="text-center text-2xl font-bold">Top 10 Leaderboard</h4>
+      <ul className="w-full max-w-xl">
+        {leaderboard.slice(0, 10).map((entry, index) => (
+          <li key={index} className="flex items-center w-full mb-2">
+            <div className="min-w-[100px] mr-3 text-right font-mono">{displayScore(entry.score, selectedChallenge)}</div>
+            <div className="flex-grow overflow-hidden">{entry.display_name}</div>
+          </li>
         ))}
       </ul>
+      </div>
+
+
+
+
     </div>
   );
 };

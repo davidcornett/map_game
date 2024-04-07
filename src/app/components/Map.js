@@ -159,15 +159,18 @@ const Map = ({ mode } ) => {
   };
 
   const getCountry = async (selectedCountyIds) => {
-    console.log(selectedChallenge);
+    const statKey = getStatKeyForCriteria(selectedChallenge?.criteria?.criteria_type);
+
     try {
       const url = `http://127.0.0.1:6205/get_new_country`;
       const body = JSON.stringify({ 
         selected_county_ids: selectedCountyIds,
         maxArea: maxArea,
         displayName: displayName.trim() || generateRandomName(),
-        challenge: selectedChallenge
+        challenge: selectedChallenge,
+        statKey: statKey
       });
+      console.log(statKey);
 
       const response = await fetch(url, {
         method: 'POST',
@@ -186,9 +189,9 @@ const Map = ({ mode } ) => {
       const data = await response.json();
       setGeoJsonData(data.geojson); 
       setCountryStats(data.stats);
-      const statKey = getStatKeyForCriteria(selectedChallenge?.criteria?.criteria_type);
-      const score = data.stats?.[statKey] || 'N/A'; // Update the user's score based on the new country's stats
-      setUserScore(score);
+      
+      //const score = data.stats?.[statKey] || 'N/A'; // Update the user's score based on the new country's stats
+      setUserScore(data.stats.challengeScore);
       setNewCountry(1);
 
     } catch (error) {
