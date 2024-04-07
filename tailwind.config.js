@@ -12,6 +12,15 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+
+      /*
+        For text color, use text-customTeal.
+        For background color, use bg-customTeal.
+        For border color, use border-customTeal.
+      */
+      colors: {
+        customTeal: '#008080',
+      },
     },
   },
   plugins: [],
