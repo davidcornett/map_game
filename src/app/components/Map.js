@@ -7,7 +7,7 @@ import CountryInfo from './CountryInfo';
 import EconomicInfo from './EconomicInfo';
 import ChallengeResult from './ChallengeResult';
 import Challenges from './Challenges'; 
-import { useSelectedChallenge } from '../SelectedChallengeContext';
+import { useSelectedChallenge, useNewCountry } from '../SelectedChallengeContext';
 
 
 const countrySizes = {
@@ -34,7 +34,7 @@ const countrySizes = {
 const Map = ({ mode } ) => {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [selectedCounties, setSelectedCounties] = useState(new Set());
-  const [newCountry, setNewCountry] = useState(0);
+  const { newCountry, setNewCountry } = useNewCountry();
   const [selectedSize, setSelectedSize] = useState('small');
   const [maxArea, setMaxArea] = useState(countrySizes.small.maxSize); // square miles
 
@@ -52,15 +52,27 @@ const Map = ({ mode } ) => {
   const [displayName, setDisplayName] = useState('');
   const [userScore, setUserScore] = useState(null);
 
-
   useEffect(() => {
-    fetch('/counties.geojson')
-      .then((response) => response.json())
-      .then((data) => {
+    // Fetches and sets GeoJSON data on component mount and when 'mode' changes.
+    // Resets GeoJSON data to null before fetching to signify a loading state.
+    const fetchGeoJsonData = async () => {
+      try {
+        setGeoJsonData(null);
+        setSelectedCounties(new Set());
+        setArea(0);
+        const response = await fetch('/counties.geojson');
+        const data = await response.json();
         setGeoJsonData(data);
-      })
-      .catch((error) => console.error('Error loading the GeoJSON data:', error));
-  }, []);
+      } catch (error) {
+        console.error('Error loading the GeoJSON data:', error);
+      }
+    };
+  
+    // Call the fetch function
+    fetchGeoJsonData();
+  
+    // This will now trigger whenever 'mode' changes, in addition to the component mounting.
+  }, [mode]); // Depend on 'mode', triggers on mode change and component mount
 
   const fetchArea = async (countyId) => {
     const url = `http://127.0.0.1:6205/get_area/${countyId}`;
@@ -304,6 +316,7 @@ const Map = ({ mode } ) => {
     )}
 
 {
+  
   newCountry && (
     <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
       <TileLayer
@@ -313,7 +326,7 @@ const Map = ({ mode } ) => {
         <GeoJSON
           data={geoJsonData}
           style={(feature) => getStyle(feature, selectedCounties.has(feature.properties.GEOID))}
-          onEachFeature={onEachFeature}
+          //onEachFeature={onEachFeature}
         />
       )}
         {mode === 'challenge' ? (

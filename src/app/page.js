@@ -4,13 +4,15 @@ import Map from './components/Map';
 import Instructions from "./components/Instructions";
 import ModeSelection from './components/ModeSelection';
 import Challenges from './components/Challenges'; 
-import { SelectedChallengeProvider, useSelectedChallenge } from './SelectedChallengeContext';
+import { SelectedChallengeProvider, useSelectedChallenge, NewCountryProvider } from './SelectedChallengeContext';
 
 
 export default function setChallengeContext() {
   return (
     <SelectedChallengeProvider>
+      <NewCountryProvider>
       <Home />
+      </NewCountryProvider>
     </SelectedChallengeProvider>
   );
 }
