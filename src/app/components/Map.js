@@ -8,6 +8,7 @@ import EconomicInfo from './EconomicInfo';
 import ChallengeResult from './ChallengeResult';
 import Challenges from './Challenges'; 
 import { useSelectedChallenge, useNewCountry } from '../SelectedChallengeContext';
+import NationalParksList from './NationalParksList';
 
 
 const countrySizes = {
@@ -52,6 +53,57 @@ const Map = ({ mode } ) => {
   const [displayName, setDisplayName] = useState('');
   const [userScore, setUserScore] = useState(null);
 
+  const [nationalParks, setNationalParks] = useState([]);
+
+
+  useEffect(() => {
+    // Resets necessary states before fetching new data.
+    const prepareForNewData = () => {
+      setGeoJsonData(null);
+      setSelectedCounties(new Set());
+      setArea(0);
+    };
+  
+    // Fetches GeoJSON data.
+    const fetchGeoJsonData = async () => {
+      try {
+        const response = await fetch('/counties.geojson');
+        const data = await response.json();
+        setGeoJsonData(data);
+      } catch (error) {
+        console.error('Error loading the GeoJSON data:', error);
+      }
+    };
+  
+    // Fetches national park data.
+    const fetchNationalParkData = async () => {
+      // Example: Hard-code parameters to fetch Yellowstone National Park data.
+      // Replace `YOUR_NPS_API_KEY` with your actual NPS API key.
+      const parkCode = "yell"; // Example park code for Yellowstone.
+      try {
+        const response = await fetch(`https://developer.nps.gov/api/v1/parks?parkCode=${parkCode}&api_key=vzzJza7WaWfQVeZ2oyHpQTQmL5fqcwte6CiWgFbV
+        `);
+        const data = await response.json();
+        // Assuming you have a state called `nationalParks` to store the fetched park data.
+        setNationalParks(data.data); // You might need to adjust this based on the actual data structure.
+      } catch (error) {
+        console.error('Error fetching national park data:', error);
+      }
+    };
+  
+    // Prepare for new data when mode changes or on component mount.
+    prepareForNewData();
+  
+    // Fetch GeoJSON and national park data.
+    fetchGeoJsonData();
+    fetchNationalParkData(); // You can call this function here to ensure it runs alongside the GeoJSON fetch.
+  
+  }, [mode]); // Depend on 'mode', triggers on mode change and component mount.
+  
+
+
+  /*
+
   useEffect(() => {
     // Fetches and sets GeoJSON data on component mount and when 'mode' changes.
     // Resets GeoJSON data to null before fetching to signify a loading state.
@@ -73,6 +125,7 @@ const Map = ({ mode } ) => {
   
     // This will now trigger whenever 'mode' changes, in addition to the component mounting.
   }, [mode]); // Depend on 'mode', triggers on mode change and component mount
+  */
 
   const fetchArea = async (countyId) => {
     const url = `http://127.0.0.1:6205/get_area/${countyId}`;
@@ -381,6 +434,8 @@ const Map = ({ mode } ) => {
     BUILD COUNTRY
   </button>
   )}
+
+  <NationalParksList parks={nationalParks} />
   {validationMessages.length > 0 && (
     <div style={{
       marginTop: '10px',
