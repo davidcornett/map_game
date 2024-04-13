@@ -77,12 +77,13 @@ const Map = ({ mode } ) => {
   
     // Fetches national park data.
     const fetchNationalParkData = async () => {
+      console.log("fetching nps");
       // Example: Hard-code parameters to fetch Yellowstone National Park data.
-      // Replace `YOUR_NPS_API_KEY` with your actual NPS API key.
       const parkCode = "yell"; // Example park code for Yellowstone.
+      const apiKey = 'vzzJza7WaWfQVeZ2oyHpQTQmL5fqcwte6CiWgFbV';
+      const parkCodes = 'cong,yose,lavo';
       try {
-        const response = await fetch(`https://developer.nps.gov/api/v1/parks?parkCode=${parkCode}&api_key=vzzJza7WaWfQVeZ2oyHpQTQmL5fqcwte6CiWgFbV
-        `);
+        const response = await fetch(`https://developer.nps.gov/api/v1/parks?parkCode=${parkCodes}&api_key=${apiKey}`);
         const data = await response.json();
         // Assuming you have a state called `nationalParks` to store the fetched park data.
         setNationalParks(data.data); // You might need to adjust this based on the actual data structure.
@@ -334,6 +335,7 @@ const Map = ({ mode } ) => {
 
   return (
     <div>
+      {!newCountry &&  (
       <div style={outerContainerStyle}>
         <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Choose Country Size </h2>
 
@@ -349,6 +351,7 @@ const Map = ({ mode } ) => {
           ))}
         </div>
       </div>
+    )}
 
     {mode === 'challenge' && <Challenges maxArea={maxArea} />}
 
@@ -386,7 +389,6 @@ const Map = ({ mode } ) => {
          <ChallengeResult userScore={userScore} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
         ) : (
           <>
-            <CountryInfo newCountryStats={countryStats} />
             <EconomicInfo newCountryStats={countryStats} />
           </>
         )}
@@ -394,71 +396,93 @@ const Map = ({ mode } ) => {
   )
 }
 
-    <div style={{ 
+<div style={{ 
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center', // Centers the children horizontally in the container
   marginTop: '10px',
 }}>
 
-{selectedChallenge && (
-  <input
-    type="text"
-    placeholder="Enter name for leaderboard (optional)"
-    value={displayName}
-    onChange={(e) => setDisplayName(e.target.value)}
-    style={{
-      width: '50%', // Make input take the full width of its parent container
-      padding: '10px', // Add some padding for visual comfort
-      margin: '10px 0', // Add some margin above and below the input
-      color: 'black', // Ensure text color is visible against the input's background
-      backgroundColor: 'white', // A light background color for the input
-      border: '1px solid #ccc', // A subtle border
-      borderRadius: '4px', // Slightly rounded corners
-    }}
-  />
-)
-}
-  { (mode === 'sandbox' || selectedChallenge) && (
-  <button
-    onClick={handleBuildClick}
-    style={{
-      backgroundColor: '#007bff',
-      color: 'white',
-      padding: '10px 20px',
-      border: 'none',
-      borderRadius: '5px',
-      fontSize: '16px',
-    }}
-  >
-    BUILD COUNTRY
-  </button>
-  )}
+  {selectedChallenge && (
+    <input
+      type="text"
+      placeholder="Enter name for leaderboard (optional)"
+      value={displayName}
+      onChange={(e) => setDisplayName(e.target.value)}
+      style={{
+        width: '50%', // Make input take the full width of its parent container
+        padding: '10px', // Add some padding for visual comfort
+        margin: '10px 0', // Add some margin above and below the input
+        color: 'black', // Ensure text color is visible against the input's background
+        backgroundColor: 'white', // A light background color for the input
+        border: '1px solid #ccc', // A subtle border
+        borderRadius: '4px', // Slightly rounded corners
+      }}
+    />
+    )
+    }
+{ (mode === 'sandbox' || selectedChallenge) && !newCountry && (
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between', // Adjust this as needed for alignment
+    alignItems: 'center', // Aligns items vertically in the center
+    padding: '10px 0', // Add some vertical padding
+  }}>
+    <input
+      type="text"
+      placeholder="Enter country name"
+      style={{
+        flexGrow: 1, // Allows the input to take up the remaining space
+        marginRight: '10px', // Adds a right margin to separate from the button
+        padding: '10px', // Pads the input for better touch interaction
+        border: '1px solid #ccc', // Gives the input a subtle border
+        borderRadius: '5px', // Rounds the corners of the input
+      }}
+    />
+    <button
+      onClick={handleBuildClick}
+      style={{
+        backgroundColor: '#007bff',
+        color: 'white',
+        padding: '10px 20px',
+        border: 'none',
+        borderRadius: '5px',
+        fontSize: '16px',
+      }}
+    >
+      BUILD COUNTRY
+    </button>
+  </div>
+)}
 
-  <NationalParksList parks={nationalParks} />
-  {validationMessages.length > 0 && (
-    <div style={{
-      marginTop: '10px',
-      padding: '10px',
-      backgroundColor: '#ffdddd',
-      border: '1px solid #ffcccc',
-      borderRadius: '5px',
-      color: '#D8000C',
-      fontSize: '14px',
-      width: 'auto',
-      maxWidth: '400px', // Ensures the box doesn't grow too wide while still allowing it to be centered
-      display: 'flex', // This ensures that the content inside the div can also be aligned according to the flexbox rules
-      flexDirection: 'column', // Stacks the validation messages vertically
-      alignItems: 'center', // Centers the validation messages horizontally within the div
-    }}>
-      {validationMessages.map((message, index) => (
-        <div key={index}>{message}</div>
-      ))}
-    </div>
-  )}
+    {validationMessages.length > 0 && (
+      <div style={{
+        marginTop: '10px',
+        padding: '10px',
+        backgroundColor: '#ffdddd',
+        border: '1px solid #ffcccc',
+        borderRadius: '5px',
+        color: '#D8000C',
+        fontSize: '14px',
+        width: 'auto',
+        maxWidth: '400px', // Ensures the box doesn't grow too wide while still allowing it to be centered
+        display: 'flex', // This ensures that the content inside the div can also be aligned according to the flexbox rules
+        flexDirection: 'column', // Stacks the validation messages vertically
+        alignItems: 'center', // Centers the validation messages horizontally within the div
+      }}>
+        {validationMessages.map((message, index) => (
+          <div key={index}>{message}</div>
+        ))}
+      </div>
+    )}
 
 </div>
-
+{ newCountry && mode === 'sandbox' && (
+  <div className="flex justify-around items-start">
+    <CountryInfo newCountryStats={countryStats} />
+    <NationalParksList parks={nationalParks} />
+  </div>
+)}
     </div>
 
     

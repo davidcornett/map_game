@@ -35,7 +35,7 @@ const EconomicInfo = ({ newCountryStats }) => {
     return (
         <div style={{
             position: 'absolute',
-            bottom: '340px', // Adjust this value based on your layout needs
+            bottom: '20px', // Adjust to a lower value to position at the bottom of the map
             left: '20px',
             backgroundColor: '#f9f9f9',
             color: '#333',
@@ -68,6 +68,7 @@ const EconomicInfo = ({ newCountryStats }) => {
         </div>
     );
 }
+
 
 export { formatGDP };
 export default EconomicInfo;
