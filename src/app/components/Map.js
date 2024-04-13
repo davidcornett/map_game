@@ -75,33 +75,29 @@ const Map = ({ mode } ) => {
       }
     };
   
-    // Fetches national park data.
-    const fetchNationalParkData = async () => {
-      console.log("fetching nps");
-      // Example: Hard-code parameters to fetch Yellowstone National Park data.
-      const parkCode = "yell"; // Example park code for Yellowstone.
-      const apiKey = 'vzzJza7WaWfQVeZ2oyHpQTQmL5fqcwte6CiWgFbV';
-      const parkCodes = 'cong,yose,lavo';
-      try {
-        const response = await fetch(`https://developer.nps.gov/api/v1/parks?parkCode=${parkCodes}&api_key=${apiKey}`);
-        const data = await response.json();
-        // Assuming you have a state called `nationalParks` to store the fetched park data.
-        setNationalParks(data.data); // You might need to adjust this based on the actual data structure.
-      } catch (error) {
-        console.error('Error fetching national park data:', error);
-      }
-    };
-  
     // Prepare for new data when mode changes or on component mount.
     prepareForNewData();
   
     // Fetch GeoJSON and national park data.
     fetchGeoJsonData();
-    fetchNationalParkData(); // You can call this function here to ensure it runs alongside the GeoJSON fetch.
   
   }, [mode]); // Depend on 'mode', triggers on mode change and component mount.
   
-
+  const fetchNationalParkData = async () => {
+    console.log("fetching nps data from backend");
+    try {
+      const response = await fetch(`http://127.0.0.1:6205/get_national_parks`);
+      const data = await response.json();
+      if (response.ok) {
+        setNationalParks(data);  // Update your state with the data
+      } else {
+        throw new Error('Failed to load national parks');
+      }
+    } catch (error) {
+      console.error('Error fetching national park data:', error);
+    }
+  };
+  
 
   /*
 
@@ -221,6 +217,7 @@ const Map = ({ mode } ) => {
     if (messages.length === 0) {
       //console.log(Array.from(selectedCounties));
       getCountry(Array.from(selectedCounties));
+      fetchNationalParkData();
     }
   };
 
