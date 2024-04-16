@@ -35,7 +35,7 @@ const ModeSelection = ({ mode, setMode }) => {
             <button
                 onClick={() => {
                     setMode('sandbox');
-                    //setSelectedChallenge(null);
+                    setSelectedChallenge(null);
                     setNewCountry(null);
                 }}
                 style={mode === 'sandbox' ? activeButtonStyle : buttonStyle}

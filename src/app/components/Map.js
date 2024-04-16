@@ -474,6 +474,7 @@ const Map = ({ mode } ) => {
     )}
 
 </div>
+
 { newCountry && mode === 'sandbox' && (
   <div className="flex justify-around items-start">
     <CountryInfo newCountryStats={countryStats} />
