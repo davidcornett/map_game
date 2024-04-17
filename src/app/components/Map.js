@@ -68,6 +68,7 @@ const Map = ({ mode } ) => {
     const fetchGeoJsonData = async () => {
       try {
         const response = await fetch('/counties.geojson');
+        //const response = await fetch('/nps_boundary.geojson'); for showing NPS parks instead
         const data = await response.json();
         setGeoJsonData(data);
       } catch (error) {
@@ -83,13 +84,26 @@ const Map = ({ mode } ) => {
   
   }, [mode]); // Depend on 'mode', triggers on mode change and component mount.
   
-  const fetchNationalParkData = async () => {
+  const fetchNationalParkData = async (selectedCountyIds) => {
     console.log("fetching nps data from backend");
     try {
-      const response = await fetch(`http://127.0.0.1:6205/get_national_parks`);
+      const url = `http://127.0.0.1:6205/get_national_parks`;
+      const body = JSON.stringify({ 
+        selected_county_ids: selectedCountyIds
+      });
+
+      //const response = await fetch(`http://127.0.0.1:6205/get_national_parks`);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body
+      });
+
       const data = await response.json();
       if (response.ok) {
-        setNationalParks(data);  // Update your state with the data
+        setNationalParks(data);  
       } else {
         throw new Error('Failed to load national parks');
       }
@@ -97,32 +111,6 @@ const Map = ({ mode } ) => {
       console.error('Error fetching national park data:', error);
     }
   };
-  
-
-  /*
-
-  useEffect(() => {
-    // Fetches and sets GeoJSON data on component mount and when 'mode' changes.
-    // Resets GeoJSON data to null before fetching to signify a loading state.
-    const fetchGeoJsonData = async () => {
-      try {
-        setGeoJsonData(null);
-        setSelectedCounties(new Set());
-        setArea(0);
-        const response = await fetch('/counties.geojson');
-        const data = await response.json();
-        setGeoJsonData(data);
-      } catch (error) {
-        console.error('Error loading the GeoJSON data:', error);
-      }
-    };
-  
-    // Call the fetch function
-    fetchGeoJsonData();
-  
-    // This will now trigger whenever 'mode' changes, in addition to the component mounting.
-  }, [mode]); // Depend on 'mode', triggers on mode change and component mount
-  */
 
   const fetchArea = async (countyId) => {
     const url = `http://127.0.0.1:6205/get_area/${countyId}`;
@@ -217,7 +205,7 @@ const Map = ({ mode } ) => {
     if (messages.length === 0) {
       //console.log(Array.from(selectedCounties));
       getCountry(Array.from(selectedCounties));
-      fetchNationalParkData();
+      fetchNationalParkData(Array.from(selectedCounties));
     }
   };
 
