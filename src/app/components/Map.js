@@ -9,7 +9,7 @@ import ChallengeResult from './ChallengeResult';
 import Challenges from './Challenges'; 
 import { useSelectedChallenge, useNewCountry } from '../SelectedChallengeContext';
 import NationalParksList from './NationalParksList';
-
+import CountryShape from './CountryShape';
 
 const countrySizes = {
   small: {
@@ -38,6 +38,8 @@ const Map = ({ mode } ) => {
   const { newCountry, setNewCountry } = useNewCountry();
   const [selectedSize, setSelectedSize] = useState('small');
   const [maxArea, setMaxArea] = useState(countrySizes.small.maxSize); // square miles
+  const [countryName, setCountryName] = useState('');
+  const [inputCountryValue, setInputCountryValue] = useState('');
 
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
@@ -85,32 +87,30 @@ const Map = ({ mode } ) => {
   }, [mode]); // Depend on 'mode', triggers on mode change and component mount.
   
   const fetchNationalParkData = async (selectedCountyIds) => {
-    console.log("fetching nps data from backend");
-    try {
-      const url = `http://127.0.0.1:6205/get_national_parks`;
-      const body = JSON.stringify({ 
-        selected_county_ids: selectedCountyIds
-      });
+    const url = `http://127.0.0.1:6205/get_national_parks`;
+    const body = JSON.stringify({ selected_county_ids: selectedCountyIds });
 
-      //const response = await fetch(`http://127.0.0.1:6205/get_national_parks`);
+    try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: body
       });
 
-      const data = await response.json();
+      const result = await response.json();
       if (response.ok) {
-        setNationalParks(data);  
+        setNationalParks(result.data);
+        if (result.data.length === 0) {
+          console.log(result.message); // Logs "No matching national parks found" or other server messages
+        }
       } else {
-        throw new Error('Failed to load national parks');
+        throw new Error(result.message || 'Failed to load national parks');
       }
     } catch (error) {
       console.error('Error fetching national park data:', error);
     }
   };
+
 
   const fetchArea = async (countyId) => {
     const url = `http://127.0.0.1:6205/get_area/${countyId}`;
@@ -203,10 +203,16 @@ const Map = ({ mode } ) => {
   
     // If there are no issues, proceed with the action
     if (messages.length === 0) {
-      //console.log(Array.from(selectedCounties));
+      setCountryName(inputCountryValue); 
+      setInputCountryValue('');
       getCountry(Array.from(selectedCounties));
       fetchNationalParkData(Array.from(selectedCounties));
     }
+  };
+
+  // Handler for input changes
+  const handleInputCountryChange = (event) => {
+    setInputCountryValue(event.target.value);
   };
 
   const getCountry = async (selectedCountyIds) => {
@@ -357,29 +363,39 @@ const Map = ({ mode } ) => {
     )}
 
 {
-  
   newCountry && (
-    <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {geoJsonData && (
-        <GeoJSON
-          data={geoJsonData}
-          style={(feature) => getStyle(feature, selectedCounties.has(feature.properties.GEOID))}
-          //onEachFeature={onEachFeature}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+  
+    <div className="md:col-span-1 p-4 text-center"> {/* Added text-center for horizontal alignment */}
+      <div className="flex flex-col justify-center items-center " style={{ height: '100%' }}> {/* This div centers the content vertically */}
+        <h2 className="text-3xl font-semibold text-white mb-4">{countryName || 'New Country'}</h2>
+        <CountryShape geojsonData={geoJsonData} width={500} height={400} />
+      </div>
+    </div>
+
+    <div className="md:col-span-2 p-4">
+      <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      )}
-        {mode === 'challenge' ? (
-         <ChallengeResult userScore={userScore} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
-        ) : (
-          <>
-            <EconomicInfo newCountryStats={countryStats} />
-          </>
+        {geoJsonData && (
+          <GeoJSON
+            data={geoJsonData}
+            style={(feature) => getStyle(feature, selectedCounties.has(feature.properties.GEOID))}
+          />
         )}
-    </MapContainer>
+        {mode === 'challenge' ? (
+          <ChallengeResult userScore={userScore} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
+        ) : (
+          <EconomicInfo newCountryStats={countryStats} />
+        )}
+      </MapContainer>
+    </div>
+    </div>
   )
 }
+
 
 <div style={{ 
   display: 'flex',
@@ -416,12 +432,15 @@ const Map = ({ mode } ) => {
     <input
       type="text"
       placeholder="Enter country name"
+      value={inputCountryValue}
+      onChange={handleInputCountryChange}
       style={{
         flexGrow: 1, // Allows the input to take up the remaining space
         marginRight: '10px', // Adds a right margin to separate from the button
         padding: '10px', // Pads the input for better touch interaction
         border: '1px solid #ccc', // Gives the input a subtle border
         borderRadius: '5px', // Rounds the corners of the input
+        color: 'black', // Ensures the text color is visible against the input's background
       }}
     />
     <button
@@ -466,7 +485,10 @@ const Map = ({ mode } ) => {
 { newCountry && mode === 'sandbox' && (
   <div className="flex justify-around items-start">
     <CountryInfo newCountryStats={countryStats} />
-    <NationalParksList parks={nationalParks} />
+    {nationalParks && (
+      <NationalParksList parks={nationalParks} />
+    )}
+    
   </div>
 )}
     </div>

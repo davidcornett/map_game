@@ -20,6 +20,7 @@ module.exports = {
       */
       colors: {
         customTeal: '#008080',
+        customDark: '#3C4248',
       },
     },
   },
