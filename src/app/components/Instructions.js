@@ -20,7 +20,7 @@ const Instructions = () => {
                 <h2 className="text-5xl font-bold" style={headingStyle}>Build your country from a unique canvas - US counties.</h2>
                 <ul>
                     <li>Click any county to start, and build up from there. Click a county again to deselect.</li>
-                    <li>Will you focus on population size or economic strength?</li>
+                    <li>Will you focus on population size or economic strength? Natural beauty?</li>
                     <li>The counties must be contiguous. No islands allowed (yet).</li>
                 </ul>
             </div>
