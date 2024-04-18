@@ -197,7 +197,13 @@ const Map = ({ mode } ) => {
     if (area > maxArea) {
       messages.push(`The selected area exceeds the maximum allowed size of ${maxArea} square miles.`);
     }
+
+    // Handle empty country case
+    if (selectedCounties.size === 0) {
+      messages.push('Please select at least one county to build your country.');
+    }
   
+
     // Future validation checks can add more messages here...
     setValidationMessages(messages);
   
@@ -490,24 +496,20 @@ newCountry && (
           ))}
         </div>
       )}
-
 </div>
 
+{/* COUNTRY INFO AND NATIONAL PARKS LIST -------------------------------------------------------------*/}
 { newCountry && mode === 'sandbox' && (
-  <div className="flex justify-around items-start">
+  <div className="flex flex-col sm:flex-row justify-around items-start p-4">
+
     <CountryInfo newCountryStats={countryStats} />
     {nationalParks && (
-      <NationalParksList parks={nationalParks} />
-    )}
-        {nationalParks && (
-      <NationalParksList parks={nationalParks} />
-    )}
-    
+      <NationalParksList parks={nationalParks}  />
+    )}    
   </div>
 )}
-    </div>
 
-    
+</div>
   );
 };
 
