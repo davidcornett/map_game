@@ -344,7 +344,7 @@ const Map = ({ mode } ) => {
       </div>
     )}
 
-    {mode === 'challenge' && <Challenges maxArea={maxArea} />}
+    {mode === 'challenge' && !newCountry && <Challenges maxArea={maxArea} />}
 
     {!newCountry && ( mode === 'sandbox' || selectedChallenge) && (
     <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>

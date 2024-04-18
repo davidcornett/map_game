@@ -4,8 +4,7 @@ import Map from './components/Map';
 import Instructions from "./components/Instructions";
 import ModeSelection from './components/ModeSelection';
 import Challenges from './components/Challenges'; 
-import { SelectedChallengeProvider, useSelectedChallenge, NewCountryProvider } from './SelectedChallengeContext';
-
+import { SelectedChallengeProvider, useSelectedChallenge, NewCountryProvider, useNewCountry } from './SelectedChallengeContext';
 
 export default function setChallengeContext() {
   return (
@@ -20,6 +19,7 @@ export default function setChallengeContext() {
 function Home() {
   const { selectedChallenge } = useSelectedChallenge(); 
   const [mode, setMode] = useState('sandbox');
+  const { newCountry, setNewCountry } = useNewCountry();
 
   const sandboxStyle = {
     backgroundColor: '#f0f0f0',
@@ -56,9 +56,11 @@ function Home() {
   return (
     <>
       <div style={containerStyle}>
+        { !newCountry && (
           <div style={instructionsStyle}>
           <Instructions />
           </div>
+        )}
           <div style={modeSelectionStyle}>
               <ModeSelection mode={mode} setMode={setMode}/>
           </div>
