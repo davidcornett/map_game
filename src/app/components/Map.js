@@ -366,6 +366,7 @@ const Map = ({ mode } ) => {
   newCountry && (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
+  
     <div className="md:col-span-1 p-4 text-center"> {/* Added text-center for horizontal alignment */}
       <div className="flex flex-col justify-center items-center " style={{ height: '100%' }}> {/* This div centers the content vertically */}
         <h2 className="text-3xl font-semibold text-white mb-4">{countryName || 'New Country'}</h2>
