@@ -1,11 +1,13 @@
 "use client";
 import React, { useState } from 'react';
-import { useSelectedChallenge, useNewCountry } from '../SelectedChallengeContext';
+import { useSelectedChallenge, useNewCountry, useMode, useRefresh } from '../SelectedChallengeContext';
 
-const ModeSelection = ({ mode, setMode }) => {
+const ModeSelection = () => {
 
     const { setSelectedChallenge } = useSelectedChallenge();
-    const { setNewCountry } = useNewCountry();
+    const { newCountry, setNewCountry } = useNewCountry();
+    const { mode, setMode } = useMode();
+    const { refresh } = useRefresh();
     
     const buttonStyle = {
         backgroundColor: 'rgb(20, 22, 28)',
@@ -35,6 +37,7 @@ const ModeSelection = ({ mode, setMode }) => {
             <button
                 onClick={() => {
                     setMode('sandbox');
+                    refresh();
                     setSelectedChallenge(null);
                     setNewCountry(null);
                 }}
@@ -44,6 +47,7 @@ const ModeSelection = ({ mode, setMode }) => {
             </button>
             <button
                 onClick={() => {
+                    refresh();
                     setMode('challenge');
                     setNewCountry(null);
                 }}

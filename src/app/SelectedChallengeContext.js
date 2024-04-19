@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 
 const SelectedChallengeContext = createContext();
-
 export const useSelectedChallenge = () => useContext(SelectedChallengeContext);
-
 export const SelectedChallengeProvider = ({ children }) => {
     const [selectedChallenge, setSelectedChallenge] = useState(null);
 
@@ -17,9 +15,7 @@ export const SelectedChallengeProvider = ({ children }) => {
 
 // New NewCountryContext
 const NewCountryContext = createContext();
-
 export const useNewCountry = () => useContext(NewCountryContext);
-
 export const NewCountryProvider = ({ children }) => {
     const [newCountry, setNewCountry] = useState(null);
 
@@ -28,4 +24,59 @@ export const NewCountryProvider = ({ children }) => {
             {children}
         </NewCountryContext.Provider>
     );
+};
+
+
+const ModeContext = createContext();
+export const useMode = () => useContext(ModeContext);
+export const ModeProvider = ({ children }) => {
+    const [mode, setMode] = useState('sandbox');
+
+    return (
+        <ModeContext.Provider value={{ mode, setMode }}>
+            {children}
+        </ModeContext.Provider>
+    );
+};
+
+
+const RefreshContext = createContext();
+export const useRefresh = () => useContext(RefreshContext);
+export const RefreshProvider = ({ children }) => {
+  const [geoJsonData, setGeoJsonData] = useState(null);
+  const [selectedCounties, setSelectedCounties] = useState(new Set());
+  const [area, setArea] = useState(0);
+
+  const refresh = () => {
+    console.log("refreshing...")
+    setGeoJsonData(null);
+    setSelectedCounties(new Set());
+    setArea(0);
+    fetchGeoJsonData();
+  };
+
+  const fetchGeoJsonData = async () => {
+    try {
+      const response = await fetch('/counties.geojson');
+      const data = await response.json();
+      setGeoJsonData(data);
+    } catch (error) {
+      console.error('Error loading the GeoJSON data:', error);
+    }
+  };
+
+  return (
+    <RefreshContext.Provider value={{
+      geoJsonData,
+      setGeoJsonData,
+      selectedCounties,
+      setSelectedCounties,
+      area,
+      setArea,
+      refresh,
+      fetchGeoJsonData
+    }}>
+      {children}
+    </RefreshContext.Provider>
+  );
 };

@@ -7,7 +7,7 @@ import CountryInfo from './CountryInfo';
 import EconomicInfo from './EconomicInfo';
 import ChallengeResult from './ChallengeResult';
 import Challenges from './Challenges'; 
-import { useSelectedChallenge, useNewCountry } from '../SelectedChallengeContext';
+import { useSelectedChallenge, useNewCountry, useMode, useRefresh } from '../SelectedChallengeContext';
 import NationalParksList from './NationalParksList';
 import CountryShape from './CountryShape';
 
@@ -32,18 +32,22 @@ const countrySizes = {
   }
 };
 
-const Map = ({ mode } ) => {
-  const [geoJsonData, setGeoJsonData] = useState(null);
-  const [selectedCounties, setSelectedCounties] = useState(new Set());
+const Map = () => {
+  const { refresh, fetchGeoJsonData, geoJsonData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea } = useRefresh();
+
+  //const [geoJsonData, setGeoJsonData] = useState(null);
+  //const [selectedCounties, setSelectedCounties] = useState(new Set());
   const { newCountry, setNewCountry } = useNewCountry();
   const [selectedSize, setSelectedSize] = useState('small');
   const [maxArea, setMaxArea] = useState(countrySizes.small.maxSize); // square miles
   const [countryName, setCountryName] = useState('');
   const [inputCountryValue, setInputCountryValue] = useState('');
 
+  const { mode } = useMode();
+
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
-  const [area, setArea] = useState(0);
+  //const [area, setArea] = useState(0);
 
   // states for country size and adjacency validation
   const [validationMessages, setValidationMessages] = useState([]);
@@ -59,33 +63,14 @@ const Map = ({ mode } ) => {
 
 
   useEffect(() => {
-    // Resets necessary states before fetching new data.
-    const prepareForNewData = () => {
-      setGeoJsonData(null);
-      setSelectedCounties(new Set());
-      setArea(0);
-    };
-  
-    // Fetches GeoJSON data.
-    const fetchGeoJsonData = async () => {
-      try {
-        const response = await fetch('/counties.geojson');
-        //const response = await fetch('/nps_boundary.geojson'); for showing NPS parks instead
-        const data = await response.json();
-        setGeoJsonData(data);
-      } catch (error) {
-        console.error('Error loading the GeoJSON data:', error);
-      }
-    };
-  
     // Prepare for new data when mode changes or on component mount.
-    prepareForNewData();
+    refresh();
   
     // Fetch GeoJSON and national park data.
     fetchGeoJsonData();
   
   }, [mode]); // Depend on 'mode', triggers on mode change and component mount.
-  
+
   const fetchNationalParkData = async (selectedCountyIds) => {
     const url = `http://127.0.0.1:6205/get_national_parks`;
     const body = JSON.stringify({ selected_county_ids: selectedCountyIds });
@@ -313,6 +298,15 @@ const Map = ({ mode } ) => {
     width: '80%', // Adjust width as necessary
     maxWidth: '100%', // Ensure the container does not exceed the width of its parent
   };
+
+  // Style for the ModeSelection component to control its width
+  const modeSelectionStyle = {
+    maxWidth: '35%', // Limits the width to 35% of the container
+    flex: '1 1 auto', // Allows the component to grow and shrink but respects the maxWidth
+    margin: '10px', // Adds some space around the buttons
+
+  };
+
   
   // returns the key in the CountryStats object for the selected challenge's criteria
   const getStatKeyForCriteria = (criteriaType) => {
@@ -331,9 +325,11 @@ const Map = ({ mode } ) => {
   const generateRandomName = () => `User_${Math.floor(Math.random() * 1000)}`;
 
   return (
+    
 
     // COUNTRY SIZE SELECTION ----------------------------------------------
     <div>
+
       {!newCountry &&  (
       <div style={outerContainerStyle}>
         <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Choose Country Size </h2>
