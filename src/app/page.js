@@ -24,14 +24,6 @@ function Home() {
   const { selectedChallenge } = useSelectedChallenge(); 
   const { newCountry, setNewCountry } = useNewCountry();
 
-  const sandboxStyle = {
-    backgroundColor: '#f0f0f0',
-  };
-
-  const challengeStyle = {
-    backgroundColor: '#d0e0f0',
-  };
-
   const containerStyle = {
     display: 'flex',
     justifyContent: 'space-between', // place child components on opposite ends of the container
@@ -59,29 +51,37 @@ function Home() {
 
   return (
     <>
-      <div style={containerStyle}>
-      
-        { !newCountry && (
-          <>
+      <div className="flex flex-col md:flex-row justify-between items-start p-5 space-y-4 md:space-y-0 md:space-x-4">
+        {/* Instructions Conditionally Rendered */}
+        {!newCountry && (
           <div style={instructionsStyle}>
-          <Instructions />
+            <Instructions />
           </div>
-          <div style={logoStyle}>
+        )}
+
+        {/* Logo and Mode Selection Container */}
+        <div className="w-full md:w-1/3 lg:w-1/4 flex flex-col items-center space-y-4">
+          
+          {/* Logo */}
+          {!newCountry && (
+          <div className="flex justify-center">
             <Image 
-              src="/logo3.png" // Path to the image in the public folder
+              src="/logo3.png" 
               alt="Logo"
-              width={200} // Set the width of the logo
-              height={200} // Set the height of the logo
+              width={200} 
+              height={200} 
             />
           </div>
-          </>
-        )}
-        <div>
-          <ModeSelection/>
+          )}
+
+          {/* Mode Selection Component Always Visible */}
+          <div className="w-full">
+            <ModeSelection/>
+          </div>
         </div>
-        
       </div>
-      
+
+      {/* Map Component */}
       <div> 
         <Map/>
       </div>

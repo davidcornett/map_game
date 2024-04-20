@@ -63,13 +63,13 @@ const Map = () => {
 
 
   useEffect(() => {
-    // Prepare for new data when mode changes or on component mount.
+    // Prepare for new data when mode changes or on component mount
     refresh();
   
     // Fetch GeoJSON and national park data.
     fetchGeoJsonData();
   
-  }, [mode]); // Depend on 'mode', triggers on mode change and component mount.
+  }, [mode]);
 
   const fetchNationalParkData = async (selectedCountyIds) => {
     const url = `http://127.0.0.1:6205/get_national_parks`;
@@ -352,6 +352,66 @@ const Map = () => {
     {mode === 'challenge' && !newCountry && <Challenges maxArea={maxArea} />}
 
 
+    {/* NEW COUNTRY NAME AND SUBMIT BUTTON ----------------------------------------------------------------------*/}
+    { (mode === 'sandbox' || selectedChallenge) && !newCountry && (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between', // Adjust this as needed for alignment
+        alignItems: 'center', // Aligns items vertically in the center
+        padding: '10px 0', // Add some vertical padding
+      }}>
+        <input
+          type="text"
+          placeholder="Enter country name"
+          value={inputCountryValue}
+          onChange={handleInputCountryChange}
+          style={{
+            flexGrow: 1, // Allows the input to take up the remaining space
+            marginRight: '10px', // Adds a right margin to separate from the button
+            padding: '10px', // Pads the input for better touch interaction
+            border: '1px solid #ccc', // Gives the input a subtle border
+            borderRadius: '5px', // Rounds the corners of the input
+            color: 'black', // Ensures the text color is visible against the input's background
+          }}
+        />
+        <button
+          onClick={handleBuildClick}
+          style={{
+            backgroundColor: '#007bff',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            fontSize: '16px',
+          }}
+        >
+          BUILD COUNTRY
+        </button>
+      </div>
+    )}
+
+    {/* VALIDATION MESSAGES ----------------------------------------------------------------------*/}
+    {validationMessages.length > 0 && (
+        <div style={{
+          marginTop: '10px',
+          padding: '10px',
+          backgroundColor: '#ffdddd',
+          border: '1px solid #ffcccc',
+          borderRadius: '5px',
+          color: '#D8000C',
+          fontSize: '14px',
+          width: 'auto',
+          maxWidth: '400px', // Ensures the box doesn't grow too wide while still allowing it to be centered
+          display: 'flex', // This ensures that the content inside the div can also be aligned according to the flexbox rules
+          flexDirection: 'column', // Stacks the validation messages vertically
+          alignItems: 'center', // Centers the validation messages horizontally within the div
+        }}>
+          {validationMessages.map((message, index) => (
+            <div key={index}>{message}</div>
+          ))}
+        </div>
+      )}
+
     {/* MAP DISPLAY -----------------------------------------------------------------------------*/}
     {!newCountry && ( mode === 'sandbox' || selectedChallenge) && (
     <MapContainer center={[37.8, -96.9]} zoom={4} style={{ height: '600px', width: '100%' }}>
@@ -431,66 +491,6 @@ newCountry && (
           borderRadius: '4px', // Slightly rounded corners
         }}
       />
-      )}
-
-  {/* NEW COUNTRY NAME AND SUBMIT BUTTON ----------------------------------------------------------------------*/}
-  { (mode === 'sandbox' || selectedChallenge) && !newCountry && (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between', // Adjust this as needed for alignment
-      alignItems: 'center', // Aligns items vertically in the center
-      padding: '10px 0', // Add some vertical padding
-    }}>
-      <input
-        type="text"
-        placeholder="Enter country name"
-        value={inputCountryValue}
-        onChange={handleInputCountryChange}
-        style={{
-          flexGrow: 1, // Allows the input to take up the remaining space
-          marginRight: '10px', // Adds a right margin to separate from the button
-          padding: '10px', // Pads the input for better touch interaction
-          border: '1px solid #ccc', // Gives the input a subtle border
-          borderRadius: '5px', // Rounds the corners of the input
-          color: 'black', // Ensures the text color is visible against the input's background
-        }}
-      />
-      <button
-        onClick={handleBuildClick}
-        style={{
-          backgroundColor: '#007bff',
-          color: 'white',
-          padding: '10px 20px',
-          border: 'none',
-          borderRadius: '5px',
-          fontSize: '16px',
-        }}
-      >
-        BUILD COUNTRY
-      </button>
-    </div>
-  )}
-
-  {/* VALIDATION MESSAGES ----------------------------------------------------------------------*/}
-      {validationMessages.length > 0 && (
-        <div style={{
-          marginTop: '10px',
-          padding: '10px',
-          backgroundColor: '#ffdddd',
-          border: '1px solid #ffcccc',
-          borderRadius: '5px',
-          color: '#D8000C',
-          fontSize: '14px',
-          width: 'auto',
-          maxWidth: '400px', // Ensures the box doesn't grow too wide while still allowing it to be centered
-          display: 'flex', // This ensures that the content inside the div can also be aligned according to the flexbox rules
-          flexDirection: 'column', // Stacks the validation messages vertically
-          alignItems: 'center', // Centers the validation messages horizontally within the div
-        }}>
-          {validationMessages.map((message, index) => (
-            <div key={index}>{message}</div>
-          ))}
-        </div>
       )}
 </div>
 
