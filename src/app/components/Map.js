@@ -43,6 +43,8 @@ const Map = () => {
   const [countryName, setCountryName] = useState('');
   const [inputCountryValue, setInputCountryValue] = useState('');
 
+  const [mapChoice, setMapChoice] = useState('counties');
+
   const { mode } = useMode();
 
   // states for selected info indicator
@@ -51,6 +53,9 @@ const Map = () => {
 
   // states for country size and adjacency validation
   const [validationMessages, setValidationMessages] = useState([]);
+
+  // state for submit button
+  const [isHovered, setIsHovered] = useState(false);
 
   // state for new country stats
   const [countryStats, setCountryStats] = useState({});
@@ -307,7 +312,46 @@ const Map = () => {
 
   };
 
+  // STYLE FOR THE INPUT FIELD AND SUBMIT BUTTON ---------------------------------------------------
+  const submitContainerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between', // Maintain space-between to align the button and input properly.
+    alignItems: 'center',
+    padding: '10px', // Increased overall padding inside the container
+    backgroundColor: 'rgb(20, 22, 28)',
+    borderRadius: '5px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // subtle shadow for depth
+    margin: '20px auto', // Centered horizontally
+    maxWidth: '600px', // Appropriate maximum width
+  };
   
+  // Style for the input field
+  const inputStyle = {
+    flexGrow: 1,
+    marginRight: '10px',
+    padding: '10px',
+    //border: '1px solid #ccc',
+    //borderRadius: '5px',
+    //backgroundColor: '#fff',
+    backgroundColor: 'rgb(60, 66, 72)',
+    color: 'white',
+  };
+  
+  // Style for the submit button, keeping it similar to your size selection buttons
+  const submitButtonStyle = {
+    backgroundColor: '#008080',
+    color: 'white',
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '5px',
+    fontSize: '16px',
+    cursor: 'pointer', // Cursor pointer to indicate it's clickable
+    transition: 'background-color 0.3s', // Smooth transition for hover effects
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  };
+
   // returns the key in the CountryStats object for the selected challenge's criteria
   const getStatKeyForCriteria = (criteriaType) => {
     const criteriaToStatKeyMap = {
@@ -352,38 +396,34 @@ const Map = () => {
     {mode === 'challenge' && !newCountry && <Challenges maxArea={maxArea} />}
 
 
-    {/* NEW COUNTRY NAME AND SUBMIT BUTTON ----------------------------------------------------------------------*/}
+    {/* NEW COUNTRY NAME AND SUBMIT BUTTON -----------------------------------------------------*/}
     { (mode === 'sandbox' || selectedChallenge) && !newCountry && (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between', // Adjust this as needed for alignment
-        alignItems: 'center', // Aligns items vertically in the center
-        padding: '10px 0', // Add some vertical padding
-      }}>
+      <div style={submitContainerStyle}>
         <input
           type="text"
-          placeholder="Enter country name"
+          placeholder="Enter country name (optional)"
           value={inputCountryValue}
           onChange={handleInputCountryChange}
-          style={{
-            flexGrow: 1, // Allows the input to take up the remaining space
-            marginRight: '10px', // Adds a right margin to separate from the button
-            padding: '10px', // Pads the input for better touch interaction
-            border: '1px solid #ccc', // Gives the input a subtle border
-            borderRadius: '5px', // Rounds the corners of the input
-            color: 'black', // Ensures the text color is visible against the input's background
-          }}
+          style={inputStyle}
         />
+    
+        {/* DISPLAY NAME INPUT FOR LEADERBOARD (if applicable) --------------------------------------*/}
+        {selectedChallenge && (
+        <input
+          type="text"
+          placeholder="Enter name for challenge leaderboard (optional)"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          style={inputStyle}
+        />
+        )}
+
+        {/* SUBMIT BUTTON ------------------------------------------------------------------------*/}
         <button
           onClick={handleBuildClick}
-          style={{
-            backgroundColor: '#007bff',
-            color: 'white',
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '5px',
-            fontSize: '16px',
-          }}
+          style={submitButtonStyle}
+          onMouseOver={e => e.target.style.backgroundColor = '#008080'} // lighter teal
+          onMouseOut={e => e.target.style.backgroundColor = '#006666'} // Back to original on mouse out
         >
           BUILD COUNTRY
         </button>
@@ -474,24 +514,6 @@ newCountry && (
   marginTop: '10px',
 }}>
 
-  {/* DISPLAY NAME INPUT FOR LEADERBOARD ----------------------------------------------------------------------*/}
-    {selectedChallenge && (
-      <input
-        type="text"
-        placeholder="Enter name for leaderboard (optional)"
-        value={displayName}
-        onChange={(e) => setDisplayName(e.target.value)}
-        style={{
-          width: '50%', // Make input take the full width of its parent container
-          padding: '10px', // Add some padding for visual comfort
-          margin: '10px 0', // Add some margin above and below the input
-          color: 'black', // Ensure text color is visible against the input's background
-          backgroundColor: 'white', // A light background color for the input
-          border: '1px solid #ccc', // A subtle border
-          borderRadius: '4px', // Slightly rounded corners
-        }}
-      />
-      )}
 </div>
 
 {/* COUNTRY INFO AND NATIONAL PARKS LIST -------------------------------------------------------------*/}
