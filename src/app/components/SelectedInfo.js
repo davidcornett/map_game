@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea }) => {
+const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, mapChoice, selectedPark }) => {
     return (
     <div style={{
     position: 'absolute',
@@ -25,11 +25,21 @@ const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea }) => 
     <div style={{ fontWeight: 'bold', marginBottom: '10px' }}>
         Country-in-Progress
     </div>
-    <div style={{ fontSize: '12px' }}>
-        Current County: <span style={{ fontWeight: 'normal' }}>
-        {selectedCounty ? `${selectedCounty} County` : 'None'}
-    </span>
-    </div>
+
+    {/* Display selected park in indicator if available, otherwise selected county */}
+    {mapChoice === 'nps' ? (
+        <div style={{ fontSize: '12px' }}>
+            National Park/Monument: <span style={{ fontWeight: 'normal' }}>
+            {selectedPark || 'None'}
+            </span>
+        </div>
+        ) : (
+        <div style={{ fontSize: '12px' }}>
+            Current County: <span style={{ fontWeight: 'normal' }}>
+                {selectedCounty ? `${selectedCounty} County` : 'None'}
+            </span>
+        </div>
+    )}
 
     <div style={{ fontSize: '12px' }}>
         Selected Counties: <span style={{ fontWeight: 'normal' }}>{selectedCount}</span>

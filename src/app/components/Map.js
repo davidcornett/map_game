@@ -49,13 +49,10 @@ const Map = () => {
 
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
-  //const [area, setArea] = useState(0);
+  const [currentPark, setCurrentPark] = useState(null);
 
   // states for country size and adjacency validation
   const [validationMessages, setValidationMessages] = useState([]);
-
-  // state for submit button
-  const [isHovered, setIsHovered] = useState(false);
 
   // state for new country stats
   const [countryStats, setCountryStats] = useState({});
@@ -166,6 +163,26 @@ const Map = () => {
       },
     });
   };
+
+  const onEachParkFeature = (feature, layer) => {
+
+    layer.on({
+      mouseover: (e) => {
+        // concatenate the park name and type for display (e.g., ["Yellowstone"] + ["National Park"])
+        setCurrentPark(`${feature.properties.UNIT_NAME} ${feature.properties.UNIT_TYPE}`); // display the park name in the info indicator
+        e.target.setStyle({
+          weight: 2
+        });
+      },
+      mouseout: (e) => {
+        setCurrentPark(null); // clear the name in the info indicator
+        e.target.setStyle({
+          weight: 0.5
+        });
+      }
+    });
+  };
+
 
   const getStyle = (feature, isSelected = false) => {
     // Define the default style for the GeoJSON features
@@ -492,10 +509,10 @@ const Map = () => {
           data={geoJsonData}
           style={(feature) => getStyle(feature,  selectedCounties.has(feature.properties.GEOID))}
           //onEachFeature={onEachFeature}
-          onEachFeature={mapChoice === 'counties' ? onEachFeature : undefined}
+          onEachFeature={mapChoice === 'counties' ? onEachFeature : onEachParkFeature}
         />
       )}
-      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} />
+      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} mapChoice={mapChoice} selectedPark={currentPark}/>
       <button onClick={changeMap} style={mapButtonStyle}>
         Toggle GeoJSON
       </button>

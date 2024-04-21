@@ -57,11 +57,20 @@ export const RefreshProvider = ({ children }) => {
 
   const fetchGeoJsonData = async ( mapChoice ) => {
     const url = mapChoice === 'nps' ? '/nps_boundary.geojson' : '/counties.geojson';
-    //const url = '/counties.geojson'
 
     try {
       const response = await fetch(url);
-      const data = await response.json();
+      let data = await response.json();
+
+      // only include National Parks and National Monuments, not the many other nps unit types
+      if (mapChoice === 'nps') {
+        data = {
+          ...data,
+          features: data.features.filter(feature =>
+            feature.properties.UNIT_TYPE === 'National Park' || feature.properties.UNIT_TYPE === 'National Monument'
+          )
+        };
+      }
       setGeoJsonData(data);
     } catch (error) {
       console.error('Error loading the GeoJSON data:', error);
