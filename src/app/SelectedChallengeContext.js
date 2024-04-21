@@ -47,18 +47,30 @@ export const RefreshProvider = ({ children }) => {
   const [selectedCounties, setSelectedCounties] = useState(new Set());
   const [area, setArea] = useState(0);
 
-  const refresh = () => {
+  const refresh = ( mapChoice ) => {
     console.log("refreshing...")
     setGeoJsonData(null);
     setSelectedCounties(new Set());
     setArea(0);
-    fetchGeoJsonData();
+    fetchGeoJsonData(mapChoice);
   };
 
-  const fetchGeoJsonData = async () => {
+  const fetchGeoJsonData = async ( mapChoice ) => {
+    const url = mapChoice === 'nps' ? '/nps_boundary.geojson' : '/counties.geojson';
+
     try {
-      const response = await fetch('/counties.geojson');
-      const data = await response.json();
+      const response = await fetch(url);
+      let data = await response.json();
+
+      // only include National Parks and National Monuments, not the many other nps unit types
+      if (mapChoice === 'nps') {
+        data = {
+          ...data,
+          features: data.features.filter(feature =>
+            feature.properties.UNIT_TYPE === 'National Park' || feature.properties.UNIT_TYPE === 'National Monument'
+          )
+        };
+      }
       setGeoJsonData(data);
     } catch (error) {
       console.error('Error loading the GeoJSON data:', error);
