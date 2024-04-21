@@ -47,17 +47,20 @@ export const RefreshProvider = ({ children }) => {
   const [selectedCounties, setSelectedCounties] = useState(new Set());
   const [area, setArea] = useState(0);
 
-  const refresh = () => {
+  const refresh = ( mapChoice ) => {
     console.log("refreshing...")
     setGeoJsonData(null);
     setSelectedCounties(new Set());
     setArea(0);
-    fetchGeoJsonData();
+    fetchGeoJsonData(mapChoice);
   };
 
-  const fetchGeoJsonData = async () => {
+  const fetchGeoJsonData = async ( mapChoice ) => {
+    const url = mapChoice === 'nps' ? '/nps_boundary.geojson' : '/counties.geojson';
+    //const url = '/counties.geojson'
+
     try {
-      const response = await fetch('/counties.geojson');
+      const response = await fetch(url);
       const data = await response.json();
       setGeoJsonData(data);
     } catch (error) {

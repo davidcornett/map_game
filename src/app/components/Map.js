@@ -69,12 +69,12 @@ const Map = () => {
 
   useEffect(() => {
     // Prepare for new data when mode changes or on component mount
-    refresh();
+    refresh( mapChoice );
   
     // Fetch GeoJSON and national park data.
-    fetchGeoJsonData();
+    //fetchGeoJsonData();
   
-  }, [mode]);
+  }, [mode, mapChoice]);
 
   const fetchNationalParkData = async (selectedCountyIds) => {
     const url = `http://127.0.0.1:6205/get_national_parks`;
@@ -101,6 +101,9 @@ const Map = () => {
     }
   };
 
+  const changeMap = () => {
+    setMapChoice(mapChoice => mapChoice === 'counties' ? 'nps' : 'counties');
+  };
 
   const fetchArea = async (countyId) => {
     const url = `http://127.0.0.1:6205/get_area/${countyId}`;
@@ -166,13 +169,26 @@ const Map = () => {
 
   const getStyle = (feature, isSelected = false) => {
     // Define the default style for the GeoJSON features
-    return {
-      fillColor: isSelected ? 'green' : 'white',
-      weight: 0.5,
-      opacity: .5,
-      color: 'black', // Border color
-      fillOpacity: 0.6
-    };
+    if (mapChoice === 'counties') {
+      // for US counties
+      return {
+        fillColor: isSelected ? 'green' : 'white',
+        weight: 0.5,
+        opacity: .5,
+        color: 'black', // Border color
+        fillOpacity: 0.6
+      };
+    } else {
+      // For NPS boundaries
+      return {
+        fillColor: 'darkgreen',
+        weight: 2,
+        opacity: 1,
+        color: 'darkgreen',
+        fillOpacity: 0.5
+      };
+    }
+
   };
 
   const handleSizeSelection = (size) => {
@@ -352,6 +368,19 @@ const Map = () => {
     justifyContent: 'center'
   };
 
+  const mapButtonStyle = {
+    position: 'absolute',
+    bottom: '20px',
+    left: '20px',
+    zIndex: 1000, // Ensure it's above the map layers
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    padding: '10px',
+    cursor: 'pointer',
+    borderRadius: '5px',
+    color: 'black',
+  };
+
   // returns the key in the CountryStats object for the selected challenge's criteria
   const getStatKeyForCriteria = (criteriaType) => {
     const criteriaToStatKeyMap = {
@@ -462,10 +491,14 @@ const Map = () => {
         <GeoJSON
           data={geoJsonData}
           style={(feature) => getStyle(feature,  selectedCounties.has(feature.properties.GEOID))}
-          onEachFeature={onEachFeature}
+          //onEachFeature={onEachFeature}
+          onEachFeature={mapChoice === 'counties' ? onEachFeature : undefined}
         />
       )}
       <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} />
+      <button onClick={changeMap} style={mapButtonStyle}>
+        Toggle GeoJSON
+      </button>
     </MapContainer>
     )}
 
@@ -499,6 +532,7 @@ newCountry && (
           <ChallengeResult userScore={userScore} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
         ) : (
           <EconomicInfo newCountryStats={countryStats} />
+  
         )}
       </MapContainer>
     </div>
