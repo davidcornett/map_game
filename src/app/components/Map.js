@@ -33,7 +33,7 @@ const countrySizes = {
 };
 
 const Map = () => {
-  const { refresh, fetchGeoJsonData, geoJsonData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea } = useRefresh();
+  const { refresh, geoJsonData, geoJsonParkData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea, showParks, setShowParks } = useRefresh();
 
   //const [geoJsonData, setGeoJsonData] = useState(null);
   //const [selectedCounties, setSelectedCounties] = useState(new Set());
@@ -44,6 +44,7 @@ const Map = () => {
   const [inputCountryValue, setInputCountryValue] = useState('');
 
   const [mapChoice, setMapChoice] = useState('counties');
+
 
   const { mode } = useMode();
 
@@ -66,12 +67,12 @@ const Map = () => {
 
   useEffect(() => {
     // Prepare for new data when mode changes or on component mount
-    refresh( mapChoice );
+    refresh();
   
     // Fetch GeoJSON and national park data.
     //fetchGeoJsonData();
   
-  }, [mode, mapChoice]);
+  }, [mode]);
 
   const fetchNationalParkData = async (selectedCountyIds) => {
     const url = `http://127.0.0.1:6205/get_national_parks`;
@@ -98,8 +99,9 @@ const Map = () => {
     }
   };
 
-  const changeMap = () => {
-    setMapChoice(mapChoice => mapChoice === 'counties' ? 'nps' : 'counties');
+  const toggleShowParks = () => {
+    // flip true/false
+    setShowParks(prev => !prev);
   };
 
   const fetchArea = async (countyId) => {
@@ -186,26 +188,16 @@ const Map = () => {
 
   const getStyle = (feature, isSelected = false) => {
     // Define the default style for the GeoJSON features
-    if (mapChoice === 'counties') {
-      // for US counties
-      return {
-        fillColor: isSelected ? 'green' : 'white',
-        weight: 0.5,
-        opacity: .5,
-        color: 'black', // Border color
-        fillOpacity: 0.6
-      };
-    } else {
-      // For NPS boundaries
-      return {
-        fillColor: 'darkgreen',
-        weight: 2,
-        opacity: 1,
-        color: 'darkgreen',
-        fillOpacity: 0.5
-      };
-    }
 
+    return {
+      fillColor: isSelected ? 'green' : 'white',
+      //fillColor: isSelected ? '#303655' : 'white',
+      //fillColor: isSelected ? '#00719c' : 'white',
+      weight: 0.5,
+      opacity: .5,
+      color: 'black', // Border color
+      fillOpacity: 0.4
+    };
   };
 
   const handleSizeSelection = (size) => {
@@ -355,7 +347,7 @@ const Map = () => {
     borderRadius: '5px',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // subtle shadow for depth
     margin: '20px auto', // Centered horizontally
-    maxWidth: '600px', // Appropriate maximum width
+    maxWidth: '900px', // Appropriate maximum width
   };
   
   // Style for the input field
@@ -390,12 +382,16 @@ const Map = () => {
     bottom: '20px',
     left: '20px',
     zIndex: 1000, // Ensure it's above the map layers
-    backgroundColor: 'white',
+    backgroundColor: '#C56C39',
     border: '1px solid #ccc',
-    padding: '10px',
+    padding: '10px 20px',
     cursor: 'pointer',
     borderRadius: '5px',
-    color: 'black',
+    color: 'white',
+    fontSize: '16px',
+    display: 'flex', // Aligns items horizontally
+    alignItems: 'center', // Vertically centers items in the button
+    justifyContent: 'center' // Centers the content inside the button
   };
 
   // returns the key in the CountryStats object for the selected challenge's criteria
@@ -457,7 +453,7 @@ const Map = () => {
         {selectedChallenge && (
         <input
           type="text"
-          placeholder="Enter name for challenge leaderboard (optional)"
+          placeholder="Enter name for leaderboard (optional)"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           style={inputStyle}
@@ -508,14 +504,29 @@ const Map = () => {
         <GeoJSON
           data={geoJsonData}
           style={(feature) => getStyle(feature,  selectedCounties.has(feature.properties.GEOID))}
-          //onEachFeature={onEachFeature}
-          onEachFeature={mapChoice === 'counties' ? onEachFeature : onEachParkFeature}
+          onEachFeature={onEachFeature}
         />
       )}
-      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} mapChoice={mapChoice} selectedPark={currentPark}/>
-      <button onClick={changeMap} style={mapButtonStyle}>
-        Toggle GeoJSON
+      {geoJsonParkData && showParks && !selectedChallenge && (
+        <GeoJSON
+          data={geoJsonParkData}
+          //style={() => ({ color: 'darkgreen', weight: 2, fillColor: '#33a02c', fillOpacity: 0.5 })}
+          style={() => ({ color: 'darkgreen', weight: 2, fillColor: '#C56C39', fillOpacity: 0.5 })}
+          onEachFeature={onEachParkFeature}
+        />
+      )}
+
+      {/* Display mouseover info and selected counties--------------------------------------------*/}
+      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} showParks={showParks} selectedPark={currentPark}/>
+
+      {/* Show National Parks button (sandbox only)-----------------------------------------------*/}
+      {mode === 'sandbox' && (
+      <button onClick={toggleShowParks} style={mapButtonStyle}>
+      {showParks ? 'Hide National Parks' : 'Show National Parks'}
+        <img src="/nps.svg" alt="Park" style={{ marginLeft: '8px', width: '16px', height: '16px' }} />
       </button>
+      )}
+
     </MapContainer>
     )}
 

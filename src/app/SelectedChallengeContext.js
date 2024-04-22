@@ -43,52 +43,68 @@ export const ModeProvider = ({ children }) => {
 const RefreshContext = createContext();
 export const useRefresh = () => useContext(RefreshContext);
 export const RefreshProvider = ({ children }) => {
-  const [geoJsonData, setGeoJsonData] = useState(null);
-  const [selectedCounties, setSelectedCounties] = useState(new Set());
-  const [area, setArea] = useState(0);
+    const [geoJsonData, setGeoJsonData] = useState(null);
+    const [geoJsonParkData, setGeoJsonParkData] = useState(null);
+    const [showParks, setShowParks] = useState(false);
+    const [selectedCounties, setSelectedCounties] = useState(new Set());
+    const [area, setArea] = useState(0);
 
-  const refresh = ( mapChoice ) => {
-    console.log("refreshing...")
-    setGeoJsonData(null);
-    setSelectedCounties(new Set());
-    setArea(0);
-    fetchGeoJsonData(mapChoice);
-  };
+    const refresh = () => {
+        setGeoJsonData(null);
+        setGeoJsonParkData(null);
+        setShowParks(false);
+        setSelectedCounties(new Set());
+        setArea(0);
+        fetchCountyGeoJsonData();
+        fetchParkGeoJsonData();
+    };
 
-  const fetchGeoJsonData = async ( mapChoice ) => {
-    const url = mapChoice === 'nps' ? '/nps_boundary.geojson' : '/counties.geojson';
+    const fetchCountyGeoJsonData = async () => {
+        try {
+            const response = await fetch('/counties.geojson');
+            const data = await response.json();
+            setGeoJsonData(data);
+        } catch (error) {
+            console.error('Error loading the county GeoJSON data:', error);
+        }
+    };
+    
+    const fetchParkGeoJsonData = async () => {
+        if (!geoJsonParkData) {  // Fetch only if park data is not already loaded
+            console.log("loading nps data");
+            try {
+                const response = await fetch('/nps_boundary.geojson');
+                const data = await response.json();
+                const filteredData = {
+                    ...data,
+                    features: data.features.filter(feature =>
+                        feature.properties.UNIT_TYPE === 'National Park' || feature.properties.UNIT_TYPE === 'National Monument'
+                    )
+                };
+                setGeoJsonParkData(filteredData);
+            } catch (error) {
+                console.error('Error loading the park GeoJSON data:', error);
+            }
+        }
+    };
 
-    try {
-      const response = await fetch(url);
-      let data = await response.json();
 
-      // only include National Parks and National Monuments, not the many other nps unit types
-      if (mapChoice === 'nps') {
-        data = {
-          ...data,
-          features: data.features.filter(feature =>
-            feature.properties.UNIT_TYPE === 'National Park' || feature.properties.UNIT_TYPE === 'National Monument'
-          )
-        };
-      }
-      setGeoJsonData(data);
-    } catch (error) {
-      console.error('Error loading the GeoJSON data:', error);
-    }
-  };
-
-  return (
-    <RefreshContext.Provider value={{
-      geoJsonData,
-      setGeoJsonData,
-      selectedCounties,
-      setSelectedCounties,
-      area,
-      setArea,
-      refresh,
-      fetchGeoJsonData
-    }}>
-      {children}
-    </RefreshContext.Provider>
-  );
-};
+    return (
+        <RefreshContext.Provider value={{
+        geoJsonData,
+        geoJsonParkData,
+        setGeoJsonData,
+        selectedCounties,
+        setSelectedCounties,
+        area,
+        setArea,
+        refresh,
+        fetchParkGeoJsonData,
+        fetchCountyGeoJsonData,
+        showParks,
+        setShowParks
+        }}>
+        {children}
+        </RefreshContext.Provider>
+    );
+    };
