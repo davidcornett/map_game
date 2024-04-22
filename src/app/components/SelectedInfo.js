@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, mapChoice, selectedPark }) => {
+const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, showParks, selectedPark }) => {
     return (
     <div style={{
     position: 'absolute',
@@ -27,26 +27,30 @@ const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, mapCh
     </div>
 
     {/* Display selected park in indicator if available, otherwise selected county */}
-    {mapChoice === 'nps' ? (
-        <div style={{ fontSize: '12px' }}>
-            National Park/Monument: <span style={{ fontWeight: 'normal' }}>
+    {showParks && (
+    <div style={{ fontSize: '12px' }}>
+        National Park/Monument: 
+        <div>
+            <span style={{ fontWeight: 'bold', marginLeft: '10px' }}>
             {selectedPark || 'None'}
             </span>
         </div>
-        ) : (
-        <div style={{ fontSize: '12px' }}>
-            Current County: <span style={{ fontWeight: 'normal' }}>
-                {selectedCounty ? `${selectedCounty} County` : 'None'}
-            </span>
-        </div>
+    </div>
     )}
 
     <div style={{ fontSize: '12px' }}>
-        Selected Counties: <span style={{ fontWeight: 'normal' }}>{selectedCount}</span>
+        Current County: <span style={{ fontWeight: 'bold' }}>
+            {selectedCounty ? `${selectedCounty} County` : 'None'}
+        </span>
+    </div>
+    
+
+    <div style={{ fontSize: '12px' }}>
+        Selected Counties: <span style={{ fontWeight: 'bold' }}>{selectedCount}</span>
     </div>
     <div style={{ fontSize: '12px' }}>
-        Total Sq. Miles: <span style={{ fontWeight: 'normal', color: totalArea > maxArea ? 'red' : 'black' }}>
-            {totalArea} / {maxArea}
+        Total Sq. Miles: <span style={{ fontWeight: 'bold', color: totalArea > maxArea ? 'red' : 'black' }}>
+            {totalArea.toLocaleString()} / {maxArea.toLocaleString()}
         </span>
         {totalArea > maxArea && (
             <span style={{ marginLeft: '10px', color: 'red', fontWeight: 'bold' }}>
