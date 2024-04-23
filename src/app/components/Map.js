@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import SelectedInfo from './SelectedInfo';
-import CountryInfo from './CountryInfo';
+import PopulationInfo from './PopulationInfo';
 import EconomicInfo from './EconomicInfo';
 import ChallengeResult from './ChallengeResult';
 import Challenges from './Challenges'; 
 import { useSelectedChallenge, useNewCountry, useMode, useRefresh } from '../SelectedChallengeContext';
 import NationalParksList from './NationalParksList';
 import CountryShape from './CountryShape';
+import Leaderboard from './Leaderboard';
 
 const countrySizes = {
   small: {
@@ -33,15 +34,14 @@ const countrySizes = {
 };
 
 const Map = () => {
-  const { refresh, geoJsonData, geoJsonParkData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea, showParks, setShowParks } = useRefresh();
+  const { refresh, geoJsonData, geoJsonParkData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea, showParks, setShowParks, countryName, setCountryName } = useRefresh();
 
   //const [geoJsonData, setGeoJsonData] = useState(null);
   //const [selectedCounties, setSelectedCounties] = useState(new Set());
   const { newCountry, setNewCountry } = useNewCountry();
   const [selectedSize, setSelectedSize] = useState('small');
   const [maxArea, setMaxArea] = useState(countrySizes.small.maxSize); // square miles
-  const [countryName, setCountryName] = useState('');
-  const [inputCountryValue, setInputCountryValue] = useState('');
+  //const [countryName, setCountryName] = useState('');
 
   const [mapChoice, setMapChoice] = useState('counties');
 
@@ -224,16 +224,11 @@ const Map = () => {
   
     // If there are no issues, proceed with the action
     if (messages.length === 0) {
-      setCountryName(inputCountryValue); 
-      setInputCountryValue('');
       getCountry(Array.from(selectedCounties));
       fetchNationalParkData(Array.from(selectedCounties));
+      setCountryName(''); 
+      setDisplayName('');
     }
-  };
-
-  // Handler for input changes
-  const handleInputCountryChange = (event) => {
-    setInputCountryValue(event.target.value);
   };
 
   const getCountry = async (selectedCountyIds) => {
@@ -245,10 +240,11 @@ const Map = () => {
         selected_county_ids: selectedCountyIds,
         maxArea: maxArea,
         displayName: displayName.trim() || generateRandomName(),
+        countryName: countryName.trim() || 'New Country',
         challenge: selectedChallenge,
         statKey: statKey
       });
-      console.log(statKey);
+      //console.log(statKey);
 
       const response = await fetch(url, {
         method: 'POST',
@@ -267,6 +263,8 @@ const Map = () => {
       const data = await response.json();
       setGeoJsonData(data.geojson); 
       setCountryStats(data.stats);
+      setCountryName(data.stats.name); // reset this from back end
+      console.log(data.stats.name)
       
       //const score = data.stats?.[statKey] || 'N/A'; // Update the user's score based on the new country's stats
       setUserScore(data.stats.challengeScore);
@@ -347,7 +345,7 @@ const Map = () => {
     borderRadius: '5px',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // subtle shadow for depth
     margin: '20px auto', // Centered horizontally
-    maxWidth: '900px', // Appropriate maximum width
+    maxWidth: mode === 'sandbox' ? '600px' : '900px', // Appropriate maximum width
   };
   
   // Style for the input field
@@ -444,8 +442,8 @@ const Map = () => {
         <input
           type="text"
           placeholder="Enter country name (optional)"
-          value={inputCountryValue}
-          onChange={handleInputCountryChange}
+          value={countryName}
+          onChange={(e) => setCountryName(e.target.value)}
           style={inputStyle}
         />
     
@@ -536,8 +534,15 @@ newCountry && (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div className="md:col-span-1 p-4 text-center"> {/* Added text-center for horizontal alignment */}
       <div className="flex flex-col justify-center items-center " style={{ height: '100%' }}> {/* This div centers the content vertically */}
+      {mode === 'sandbox' && (
+        <>
         <h2 className="text-3xl font-semibold text-white mb-4">{countryName || 'New Country'}</h2>
         <CountryShape geojsonData={geoJsonData} width={500} height={400} />
+        </>
+      )}
+      {mode === 'challenge' && (
+        <Leaderboard userScore={userScore} maxArea={maxArea}/>
+        )}
       </div>
     </div>
 
@@ -564,10 +569,9 @@ newCountry && (
         )}
       </MapContainer>
     </div>
-    </div>
+   </div>
   )
 }
-
 
 <div style={{ 
   display: 'flex',
@@ -582,7 +586,7 @@ newCountry && (
 { newCountry && mode === 'sandbox' && (
   <div className="flex flex-col sm:flex-row justify-around items-start p-4">
 
-    <CountryInfo newCountryStats={countryStats} />
+    <PopulationInfo newCountryStats={countryStats} />
     {nationalParks && (
       <NationalParksList parks={nationalParks}  />
     )}    
