@@ -41,20 +41,32 @@ const Leaderboard = ({ userScore, maxArea }) => {
 
   return (
 
-<div className="flex justify-center items-center p-4"> 
-      <div className="w-full max-w-xl mx-auto">
-      <h4 className="text-center text-2xl font-bold">Top 10 Leaderboard</h4>
-      <ul className="w-full max-w-xl">
-        {leaderboard.slice(0, 10).map((entry, index) => (
-          <li key={index} className="flex items-center w-full mb-2">
-            <div className="min-w-[100px] mr-3 text-right font-mono">{entry.score}</div>
-            <div className="flex-grow overflow-hidden">{entry.display_name}</div>
-          </li>
-        ))}
-      </ul>
-      </div>
-
+    <div className="flex justify-center items-center text-gray-800 p-4 bg-white rounded-lg shadow-md">
+        <div className="w-full max-w-xl mx-auto">
+            <h4 className="text-center text-2xl font-bold">Top 10 Leaderboard</h4>
+            <table className="w-full max-w-xl text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th className="px-4 py-2">#</th>
+                        <th className="px-4 py-2">Score</th>
+                        <th className="px-4 py-2">Player</th>
+                        <th className="px-4 py-2">Country</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y-4 divide-white bg-blue-100">
+                    {leaderboard.slice(0, 10).map((entry, index) => (
+                        <tr key={index}>
+                            <td className="px-4 py-2">{index + 1}</td>
+                            <td className="px-4 py-2text-right">{entry.score.toLocaleString()}</td>
+                            <td className="px-4 py-2">{entry.display_name}</td>
+                            <td className="px-4 py-2">{entry.country_name}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     </div>
+
   );
 };
 
