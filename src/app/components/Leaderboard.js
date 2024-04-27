@@ -41,6 +41,7 @@ const Leaderboard = ({ userScore, maxArea }) => {
 
   return (
 
+
     <div className="flex justify-center items-center text-gray-800 p-4 bg-white rounded-lg shadow-md">
         <div className="w-full max-w-xl mx-auto">
             <h4 className="text-center text-2xl font-bold">Top 10 Leaderboard</h4>
