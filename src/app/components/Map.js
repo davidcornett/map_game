@@ -62,7 +62,7 @@ const Map = () => {
   const [displayName, setDisplayName] = useState('');
   const [userScore, setUserScore] = useState(null);
 
-  const [nationalParks, setNationalParks] = useState([]);
+  const [nationalParks, setNationalParks] = useState('');
 
 
   useEffect(() => {
@@ -86,10 +86,13 @@ const Map = () => {
       });
 
       const result = await response.json();
-      if (response.ok) {
-        setNationalParks(result.data);
+      if (response.ok) {        
         if (result.data.length === 0) {
           console.log(result.message); // Logs "No matching national parks found" or other server messages
+        }
+        else {
+          // returned at least 1 NP
+          setNationalParks(result.data);
         }
       } else {
         throw new Error(result.message || 'Failed to load national parks');
@@ -264,7 +267,7 @@ const Map = () => {
       setGeoJsonData(data.geojson); 
       setCountryStats(data.stats);
       setCountryName(data.stats.name); // reset this from back end
-      console.log(data.stats.name)
+      console.log(data.stats.landCover)
       
       //const score = data.stats?.[statKey] || 'N/A'; // Update the user's score based on the new country's stats
       setUserScore(data.stats.challengeScore);
@@ -323,7 +326,21 @@ const Map = () => {
     flexDirection: 'column', // Stack children vertically
     alignItems: 'center', // Center-align children
     gap: '1em', // Space between children
-    width: '80%', // Adjust width as necessary
+    width: '80%',
+    maxWidth: '100%', // Ensure the container does not exceed the width of its parent
+  };
+
+  const landCoverDivStyle = {
+    backgroundColor: 'rgb(20, 22, 28)',
+    borderRadius: '10px', // Rounded edges for the container
+    padding: '20px', // Padding inside the container, around the heading and buttons
+    margin: '20px auto', // Margin for top, bottom, and auto on the sides for center alignment
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+    display: 'flex',
+    flexDirection: 'column', // Stack children vertically
+    alignItems: 'center', // Center-align children
+    gap: '1em', // Space between children
+    width: '100%',
     maxWidth: '100%', // Ensure the container does not exceed the width of its parent
   };
 
@@ -531,13 +548,52 @@ const Map = () => {
 {/* COUNTRY SHAPE IMAGE -------------------------------------------------------------------------*/}
 {
 newCountry && (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div className="md:col-span-1 p-4 text-center"> {/* Added text-center for horizontal alignment */}
       <div className="flex flex-col justify-center items-center " style={{ height: '100%' }}> {/* This div centers the content vertically */}
       {mode === 'sandbox' && (
         <>
         <h2 className="text-3xl font-semibold text-white mb-4">{countryName || 'New Country'}</h2>
         <CountryShape geojsonData={geoJsonData} width={500} height={400} />
+        <div style={landCoverDivStyle}>
+          <h2 className="text-2xl font-bold text-white">Land Types</h2>
+
+          {/* LAND COVER stats --------------------------------------------------------------------*/}
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
+
+          {/* FOREST */}
+          <div className="p-2 bg-gray-800 text-white rounded shadow flex items-center">
+            <img src="/lc_forest.svg" alt="Forest" className="w-14 h-14 mr-2" />
+            <div>
+              <span className="block text-sm">Forest</span>
+              <span className="block font-bold">{Math.round(countryStats.landCover.Forest).toLocaleString()} sq. miles</span>
+            </div>
+          </div>
+          
+          {/* AGRICULTURAL */}
+          <div className="p-2 bg-gray-800 text-white rounded shadow flex items-center">
+            <img src="/lc_agriculture.svg" alt="Agriculture" className="w-14 h-14 mr-2" />
+            <div>
+              <span className="block text-sm">Agriculture</span>
+              <span className="block font-bold">{Math.round(countryStats.landCover.Agriculture).toLocaleString()} sq. miles</span>
+            </div>
+          </div>
+          {/* DEVELOPED */}
+          <div className="p-2 bg-gray-800 text-white rounded shadow flex items-center">
+            <img src="lc_developed.svg" alt="Developed" className="w-14 h-14 mr-2" />
+            <div>
+              <span className="block text-sm">Developed</span>
+              <span className="block font-bold">{Math.round(countryStats.landCover.Developed).toLocaleString()} sq. miles</span>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        {/* NATIONAL PARKS LIST -----------------------------------------------------------------*/}
+        {nationalParks && (
+          <NationalParksList parks={nationalParks}  />
+        )}
+
         </>
       )}
       {mode === 'challenge' && (
@@ -560,38 +616,25 @@ newCountry && (
         )}
 
 {/* CHALLENGE RESULT & LEADERBOARD (if challenge) ------------------------------------------------ */}
-{/* ECONOMIC INFO (if sandbox) ------------------------------------------------------------------- */}
-        {mode === 'challenge' ? (
+        {mode === 'challenge' && (
           <ChallengeResult userScore={userScore} maxArea={maxArea}/> // Render ChallengeResult in challenge mode
-        ) : (
-          <EconomicInfo newCountryStats={countryStats} />
-  
         )}
       </MapContainer>
+
+      {/* DEMOGRAPHIC and ECONOMIC INFO -------------------------------------------------------------*/}
+      { newCountry && mode === 'sandbox' && (
+        <div className="flex flex-col sm:flex-row justify-around items-start p-4">
+
+
+          <PopulationInfo newCountryStats={countryStats} />
+          <EconomicInfo newCountryStats={countryStats} />
+          
+        </div>
+      )}
     </div>
    </div>
   )
 }
-
-<div style={{ 
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center', // Centers the children horizontally in the container
-  marginTop: '10px',
-}}>
-
-</div>
-
-{/* COUNTRY INFO AND NATIONAL PARKS LIST -------------------------------------------------------------*/}
-{ newCountry && mode === 'sandbox' && (
-  <div className="flex flex-col sm:flex-row justify-around items-start p-4">
-
-    <PopulationInfo newCountryStats={countryStats} />
-    {nationalParks && (
-      <NationalParksList parks={nationalParks}  />
-    )}    
-  </div>
-)}
 
 </div>
   );

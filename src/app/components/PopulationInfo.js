@@ -5,9 +5,8 @@ const PopulationInfo = ({ newCountryStats }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="max-w-lg mx-auto my-8 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">New Country Demographics</h2>
-            Total Population: <span className="font-normal">{newCountryStats.total_population.toLocaleString()}</span>
+        <div className="max-w-lg mx-auto my-8 p-6 bg-customVeryDark rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-center text-white mb-6">Demographics</h2>
 
             <div className="max-w-md w-full mx-auto bg-blue-100 rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
             <div className="p-4 flex justify-between items-center">

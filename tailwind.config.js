@@ -21,6 +21,7 @@ module.exports = {
       colors: {
         customTeal: '#008080',
         customDark: '#3C4248',
+        customVeryDark: 'rgb(20, 22, 28)'
       },
     },
   },
