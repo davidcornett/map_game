@@ -13,7 +13,6 @@ export const SelectedChallengeProvider = ({ children }) => {
 };
 
 
-// New NewCountryContext
 const NewCountryContext = createContext();
 export const useNewCountry = () => useContext(NewCountryContext);
 export const NewCountryProvider = ({ children }) => {
@@ -48,6 +47,7 @@ export const RefreshProvider = ({ children }) => {
     const [showParks, setShowParks] = useState(false);
     const [selectedCounties, setSelectedCounties] = useState(new Set());
     const [area, setArea] = useState(0);
+    const [countryName, setCountryName] = useState('');
 
     const refresh = () => {
         setGeoJsonData(null);
@@ -55,6 +55,7 @@ export const RefreshProvider = ({ children }) => {
         setShowParks(false);
         setSelectedCounties(new Set());
         setArea(0);
+        setCountryName('');
         fetchCountyGeoJsonData();
         fetchParkGeoJsonData();
     };
@@ -68,6 +69,7 @@ export const RefreshProvider = ({ children }) => {
             console.error('Error loading the county GeoJSON data:', error);
         }
     };
+    
     
     const fetchParkGeoJsonData = async () => {
         if (!geoJsonParkData) {  // Fetch only if park data is not already loaded
@@ -102,7 +104,9 @@ export const RefreshProvider = ({ children }) => {
         fetchParkGeoJsonData,
         fetchCountyGeoJsonData,
         showParks,
-        setShowParks
+        setShowParks,
+        countryName,
+        setCountryName
         }}>
         {children}
         </RefreshContext.Provider>

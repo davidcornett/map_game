@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
 
-function toTitleCase(str) {
-  return str
-    .toLowerCase()  // First, make all characters lowercase
-    .split(' ')  // Split the string into an array of words
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize the first character of each word
-    .join(' ');  // Join the words back into a string
-}
-
-
-const ChallengeResult = ({ userScore, maxArea }) => {
+const Leaderboard = ({ userScore, maxArea }) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const { selectedChallenge } = useSelectedChallenge(); // Access the selected challenge from context
 
@@ -48,53 +39,36 @@ const ChallengeResult = ({ userScore, maxArea }) => {
     getLeaderboard();
   }, [selectedChallenge]); // React to changes in selectedChallenge
 
-
-
-
-  
-
   return (
-    <div style={{
-      position: 'absolute',
-      bottom: '20px',
-      left: '20px',
-      backgroundColor: '#f9f9f9',
-      color: '#333',
-      padding: '10px',
-      borderRadius: '8px',
-      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-      border: '1px solid rgba(0,0,0,0.1)',
-      fontSize: '14px',
-      fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-      zIndex: 1000,
-      width: '250px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-    }}>
-      <h4 className='text-2xl font-bold text-customTeal'>Challenge Results</h4>
-      <h3>{metricDisplay} Score: <span className="font-semibold text-customTeal">{userScore.toLocaleString()}</span></h3>
-      <h3>Challenge: <span className="font-semibold text-customTeal">{selectedChallenge.name}</span></h3>
-      <h3>Allowed Area (sq. miles): <span className="font-semibold text-customTeal">{selectedChallenge.max_area.toLocaleString()}</span></h3>
 
 
-      <div className="w-full max-w-xl mx-auto">
-      <h4 className="text-center text-2xl font-bold">Top 10 Leaderboard</h4>
-      <ul className="w-full max-w-xl">
-        {leaderboard.slice(0, 10).map((entry, index) => (
-          <li key={index} className="flex items-center w-full mb-2">
-            <div className="min-w-[100px] mr-3 text-right font-mono">{displayScore(entry.score, selectedChallenge)}</div>
-            <div className="flex-grow overflow-hidden">{entry.display_name}</div>
-          </li>
-        ))}
-      </ul>
-      </div>
-
-
-
-
+    <div className="flex justify-center items-center text-gray-800 p-4 bg-white rounded-lg shadow-md">
+        <div className="w-full max-w-xl mx-auto">
+            <h4 className="text-center text-2xl font-bold">Top 10 Leaderboard</h4>
+            <table className="w-full max-w-xl text-left border-collapse">
+                <thead>
+                    <tr>
+                        <th className="px-4 py-2">#</th>
+                        <th className="px-4 py-2">Score</th>
+                        <th className="px-4 py-2">Player</th>
+                        <th className="px-4 py-2">Country</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y-4 divide-white bg-blue-100">
+                    {leaderboard.slice(0, 10).map((entry, index) => (
+                        <tr key={index}>
+                            <td className="px-4 py-2">{index + 1}</td>
+                            <td className="px-4 py-2text-right">{entry.score.toLocaleString()}</td>
+                            <td className="px-4 py-2">{entry.display_name}</td>
+                            <td className="px-4 py-2">{entry.country_name}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     </div>
+
   );
 };
 
-export default ChallengeResult;
+export default Leaderboard;
