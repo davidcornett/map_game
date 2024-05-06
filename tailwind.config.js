@@ -23,6 +23,10 @@ module.exports = {
         customDark: '#3C4248',
         customVeryDark: 'rgb(20, 22, 28)'
       },
+      fontFamily: {
+        //'mono': ['Roboto Mono', 'Monaco', 'Consolas', 'Courier New', 'monospace']
+        'mono': ['Consolas', 'Courier New', 'monospace']
+      },
     },
   },
   plugins: [],

@@ -50,6 +50,7 @@ const Map = () => {
 
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
+  const [currentCountyID, setCurrentCountyID] = useState(null);
   const [currentPark, setCurrentPark] = useState(null);
 
   // states for country size and adjacency validation
@@ -146,19 +147,15 @@ const Map = () => {
     });
   };
 
-  const onEachFeature = (feature, layer) => {
+  const onEachCountyFeature = (feature, layer) => {
     layer.on({
-      mouseover: (e) => {
+      mouseover: () => {
         setCurrentCounty(feature.properties.NAME); // display the name in the info indicator
-        e.target.setStyle({
-          weight: 2
-        });
+        setCurrentCountyID(feature.properties.GEOID);
       },
-      mouseout: (e) => {
+      mouseout: () => {
         setCurrentCounty(null); // clear the name in the info indicator
-        e.target.setStyle({
-          weight: 0.5
-        });
+        setCurrentCountyID(null);
       },
 
       click: () => {
@@ -192,11 +189,12 @@ const Map = () => {
   const getStyle = (feature, isSelected = false) => {
     // Define the default style for the GeoJSON features
 
+    const isHovered = currentCountyID === feature.properties.GEOID;
     return {
       fillColor: isSelected ? 'green' : 'white',
       //fillColor: isSelected ? '#303655' : 'white',
       //fillColor: isSelected ? '#00719c' : 'white',
-      weight: 0.5,
+      weight: isHovered? 2 : 0.5,
       opacity: .5,
       color: 'black', // Border color
       fillOpacity: 0.4
@@ -519,7 +517,7 @@ const Map = () => {
         <GeoJSON
           data={geoJsonData}
           style={(feature) => getStyle(feature,  selectedCounties.has(feature.properties.GEOID))}
-          onEachFeature={onEachFeature}
+          onEachFeature={onEachCountyFeature}
         />
       )}
       {geoJsonParkData && showParks && !selectedChallenge && (
