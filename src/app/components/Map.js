@@ -265,7 +265,8 @@ const Map = () => {
       setGeoJsonData(data.geojson); 
       setCountryStats(data.stats);
       setCountryName(data.stats.name); // reset this from back end
-      console.log(data.stats.landCover)
+      //console.log(data.stats.landCover)
+      console.log(data.stats.similarCountries)
       
       //const score = data.stats?.[statKey] || 'N/A'; // Update the user's score based on the new country's stats
       setUserScore(data.stats.challengeScore);
@@ -560,30 +561,37 @@ newCountry && (
           <div className="flex flex-wrap justify-center gap-2 mt-4">
 
           {/* FOREST */}
+          {countryStats.landCover.hasOwnProperty('Forest') && (
           <div className="p-2 bg-gray-800 text-white rounded shadow flex items-center">
-            <img src="/lc_forest.svg" alt="Forest" className="w-14 h-14 mr-2" />
-            <div>
-              <span className="block text-sm">Forest</span>
+            <img src="/lc_forest.svg" alt="Forest" className="w-12 h-12 mr-2" />
+            <div className="text-sm">
+              <span className="block">Forest</span>
               <span className="block font-bold">{Math.round(countryStats.landCover.Forest).toLocaleString()} sq. miles</span>
             </div>
           </div>
+          )}
           
           {/* AGRICULTURAL */}
+          {countryStats.landCover.hasOwnProperty('Agriculture') && (
           <div className="p-2 bg-gray-800 text-white rounded shadow flex items-center">
-            <img src="/lc_agriculture.svg" alt="Agriculture" className="w-14 h-14 mr-2" />
-            <div>
-              <span className="block text-sm">Agriculture</span>
+            <img src="/lc_agriculture.svg" alt="Agriculture" className="w-12 h-12 mr-2" />
+            <div className="text-sm">
+              <span>Agriculture</span>
               <span className="block font-bold">{Math.round(countryStats.landCover.Agriculture).toLocaleString()} sq. miles</span>
             </div>
           </div>
+          )}
+
           {/* DEVELOPED */}
+          {countryStats.landCover.hasOwnProperty('Developed') && (
           <div className="p-2 bg-gray-800 text-white rounded shadow flex items-center">
-            <img src="lc_developed.svg" alt="Developed" className="w-14 h-14 mr-2" />
-            <div>
-              <span className="block text-sm">Developed</span>
+            <img src="lc_developed.svg" alt="Developed" className="w-12 h-12 mr-2" />
+            <div className="text-sm">
+              <span className="block">Developed</span>
               <span className="block font-bold">{Math.round(countryStats.landCover.Developed).toLocaleString()} sq. miles</span>
             </div>
           </div>
+          )}
         </div>
         </div>
 

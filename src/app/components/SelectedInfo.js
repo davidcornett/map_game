@@ -4,7 +4,7 @@ const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, showP
     return (
     <div style={{
     position: 'absolute',
-    bottom: '20px',
+    top: '20px',
     right: '20px',
     backgroundColor: '#f9f9f9',
     color: '#333',
