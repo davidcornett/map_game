@@ -6,10 +6,11 @@ const PopulationInfo = ({ newCountryStats }) => {
     const [isComparisonsOpen, setComparisonsIsOpen] = useState(false);
 
     const similarCountriesData = newCountryStats.similarCountries || [];
+    console.log(similarCountriesData);
 
     return (
         <div className="max-w-lg mx-auto my-8 p-6 bg-customVeryDark rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-center text-white mb-6">Demographics</h2>
+            <h2 className="text-2xl font-bold text-center text-white mb-6">Population</h2>
 
             <div className="max-w-md w-full mx-auto bg-blue-100 rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
             <div className="p-4 flex justify-between items-center">

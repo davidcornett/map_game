@@ -69,9 +69,7 @@ const Map = () => {
   useEffect(() => {
     // Prepare for new data when mode changes or on component mount
     refresh();
-  
-    // Fetch GeoJSON and national park data.
-    //fetchGeoJsonData();
+    setValidationMessages([]); // Clear any previous validation messages
   
   }, [mode]);
 
@@ -369,9 +367,6 @@ const Map = () => {
     flexGrow: 1,
     marginRight: '10px',
     padding: '10px',
-    //border: '1px solid #ccc',
-    //borderRadius: '5px',
-    //backgroundColor: '#fff',
     backgroundColor: 'rgb(60, 66, 72)',
     color: 'white',
   };
@@ -487,26 +482,24 @@ const Map = () => {
     )}
 
     {/* VALIDATION MESSAGES ----------------------------------------------------------------------*/}
-    {validationMessages.length > 0 && (
-        <div style={{
-          marginTop: '10px',
-          padding: '10px',
-          backgroundColor: '#ffdddd',
-          border: '1px solid #ffcccc',
-          borderRadius: '5px',
-          color: '#D8000C',
-          fontSize: '14px',
-          width: 'auto',
-          maxWidth: '400px', // Ensures the box doesn't grow too wide while still allowing it to be centered
-          display: 'flex', // This ensures that the content inside the div can also be aligned according to the flexbox rules
-          flexDirection: 'column', // Stacks the validation messages vertically
-          alignItems: 'center', // Centers the validation messages horizontally within the div
-        }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+      {/* Validation messages */}
+      {validationMessages.length > 0 && (
+      <div style={{
+        padding: '10px',
+        backgroundColor: '#ffdddd',
+        border: '1px solid #ffcccc',
+        borderRadius: '5px',
+        color: '#D8000C',
+        maxWidth: '400px',
+        textAlign: 'center' // Center-aligns the text inside the div
+      }}>
           {validationMessages.map((message, index) => (
             <div key={index}>{message}</div>
           ))}
         </div>
       )}
+    </div>
 
     {/* MAP DISPLAY -----------------------------------------------------------------------------*/}
     {!newCountry && ( mode === 'sandbox' || selectedChallenge) && (
@@ -630,7 +623,6 @@ newCountry && (
       {/* DEMOGRAPHIC and ECONOMIC INFO -------------------------------------------------------------*/}
       { newCountry && mode === 'sandbox' && (
         <div className="flex flex-col sm:flex-row justify-around items-start p-4">
-
 
           <PopulationInfo newCountryStats={countryStats} />
           <EconomicInfo newCountryStats={countryStats} />
