@@ -36,17 +36,10 @@ const countrySizes = {
 const Map = () => {
   const { refresh, geoJsonData, geoJsonParkData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea, showParks, setShowParks, countryName, setCountryName } = useRefresh();
 
-  //const [geoJsonData, setGeoJsonData] = useState(null);
-  //const [selectedCounties, setSelectedCounties] = useState(new Set());
   const { newCountry, setNewCountry } = useNewCountry();
   const [selectedSize, setSelectedSize] = useState('small');
   const [maxArea, setMaxArea] = useState(countrySizes.small.maxSize); // square miles
-  //const [countryName, setCountryName] = useState('');
-
-  const [mapChoice, setMapChoice] = useState('counties');
-
-
-  const { mode } = useMode();
+  const { mode } = useMode(); // challenge or sandbox
 
   // states for selected info indicator
   const [currentCounty, setCurrentCounty] = useState(null);
@@ -56,13 +49,13 @@ const Map = () => {
   // states for country size and adjacency validation
   const [validationMessages, setValidationMessages] = useState([]);
 
-  // state for new country stats
+  // states for new country stats
   const [countryStats, setCountryStats] = useState({});
-
   const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
   const [displayName, setDisplayName] = useState('');
   const [userScore, setUserScore] = useState(null);
 
+  // states for nps
   const [nationalParks, setNationalParks] = useState('');
 
 
@@ -183,15 +176,12 @@ const Map = () => {
     });
   };
 
-
   const getStyle = (feature, isSelected = false) => {
     // Define the default style for the GeoJSON features
 
     const isHovered = currentCountyID === feature.properties.GEOID;
     return {
       fillColor: isSelected ? 'green' : 'white',
-      //fillColor: isSelected ? '#303655' : 'white',
-      //fillColor: isSelected ? '#00719c' : 'white',
       weight: isHovered? 2 : 0.5,
       opacity: .5,
       color: 'black', // Border color
@@ -217,14 +207,18 @@ const Map = () => {
       messages.push('Please select at least one county to build your country.');
     }
   
-
     // Future validation checks can add more messages here...
     setValidationMessages(messages);
   
     // If there are no issues, proceed with the action
     if (messages.length === 0) {
       getCountry(Array.from(selectedCounties));
-      fetchNationalParkData(Array.from(selectedCounties));
+
+      // only fetch nps data in sandbox mode
+      if (mode === 'sandbox'){
+        fetchNationalParkData(Array.from(selectedCounties));
+      }
+
       setCountryName(''); 
       setDisplayName('');
     }
@@ -243,7 +237,6 @@ const Map = () => {
         challenge: selectedChallenge,
         statKey: statKey
       });
-      //console.log(statKey);
 
       const response = await fetch(url, {
         method: 'POST',
@@ -260,13 +253,11 @@ const Map = () => {
       }
       
       const data = await response.json();
+
+      // set states
       setGeoJsonData(data.geojson); 
       setCountryStats(data.stats);
       setCountryName(data.stats.name); // reset this from back end
-      //console.log(data.stats.landCover)
-      console.log(data.stats.similarCountries)
-      
-      //const score = data.stats?.[statKey] || 'N/A'; // Update the user's score based on the new country's stats
       setUserScore(data.stats.challengeScore);
       setNewCountry(1);
 
@@ -280,7 +271,6 @@ const Map = () => {
   
   const sizeButtonStyle = (size) => ({
     backgroundColor: selectedSize === size ? 'rgb(60, 66, 72)' : 'rgb(40, 44, 52)',
-    //backgroundColor: selectedSize === size ? 'rgb(40, 44, 52)' : 'rgb(20, 22, 28)',
     color: 'white',
     padding: '1em 1.2em',
     border: 'none',
@@ -313,7 +303,7 @@ const Map = () => {
     gap: '1em',
   };
 
-  const outerContainerStyle = {
+  const baseContainerStyle = {
     backgroundColor: 'rgb(20, 22, 28)',
     borderRadius: '10px', // Rounded edges for the container
     padding: '20px', // Padding inside the container, around the heading and buttons
@@ -323,30 +313,18 @@ const Map = () => {
     flexDirection: 'column', // Stack children vertically
     alignItems: 'center', // Center-align children
     gap: '1em', // Space between children
+  }
+
+  const outerContainerStyle = {
+    ...baseContainerStyle,
     width: '80%',
     maxWidth: '100%', // Ensure the container does not exceed the width of its parent
   };
 
   const landCoverDivStyle = {
-    backgroundColor: 'rgb(20, 22, 28)',
-    borderRadius: '10px', // Rounded edges for the container
-    padding: '20px', // Padding inside the container, around the heading and buttons
-    margin: '20px auto', // Margin for top, bottom, and auto on the sides for center alignment
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
-    display: 'flex',
-    flexDirection: 'column', // Stack children vertically
-    alignItems: 'center', // Center-align children
-    gap: '1em', // Space between children
+    ...baseContainerStyle,
     width: '100%',
     maxWidth: '100%', // Ensure the container does not exceed the width of its parent
-  };
-
-  // Style for the ModeSelection component to control its width
-  const modeSelectionStyle = {
-    maxWidth: '35%', // Limits the width to 35% of the container
-    flex: '1 1 auto', // Allows the component to grow and shrink but respects the maxWidth
-    margin: '10px', // Adds some space around the buttons
-
   };
 
   // STYLE FOR THE INPUT FIELD AND SUBMIT BUTTON ---------------------------------------------------
@@ -386,7 +364,7 @@ const Map = () => {
     justifyContent: 'center'
   };
 
-  const mapButtonStyle = {
+  const parksButtonStyle = {
     position: 'absolute',
     bottom: '20px',
     left: '20px',
@@ -421,7 +399,6 @@ const Map = () => {
 
   return (
     
-
     // COUNTRY SIZE SELECTION ----------------------------------------------
     <div>
 
@@ -528,7 +505,7 @@ const Map = () => {
 
       {/* Show National Parks button (sandbox only)-----------------------------------------------*/}
       {mode === 'sandbox' && (
-      <button onClick={toggleShowParks} style={mapButtonStyle}>
+      <button onClick={toggleShowParks} style={parksButtonStyle}>
       {showParks ? 'Hide National Parks' : 'Show National Parks'}
         <img src="/nps.svg" alt="Park" style={{ marginLeft: '8px', width: '16px', height: '16px' }} />
       </button>
@@ -596,7 +573,7 @@ newCountry && (
         </>
       )}
       {mode === 'challenge' && (
-        <Leaderboard userScore={userScore} maxArea={maxArea}/>
+        <Leaderboard maxArea={maxArea}/>
         )}
       </div>
     </div>

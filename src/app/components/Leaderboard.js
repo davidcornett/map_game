@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
 
-const Leaderboard = ({ userScore, maxArea }) => {
+const Leaderboard = ({ maxArea }) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const { selectedChallenge } = useSelectedChallenge(); // Access the selected challenge from context
 
@@ -13,8 +13,9 @@ const Leaderboard = ({ userScore, maxArea }) => {
       // Adjusted to use selectedChallenge from context
       const params = new URLSearchParams({
         name: selectedChallenge.name,
-        maxArea: maxArea 
+        maxArea: maxArea
       });
+      console.log(maxArea);
 
       const response = await fetch(`http://127.0.0.1:6205/leaderboard?${params.toString()}`, {
         method: 'GET',

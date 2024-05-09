@@ -13,7 +13,6 @@ const Challenges = ({ maxArea }) => {
             throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log("Fetched challenges:", data);
             setChallenges(data);
         } catch (error) {
             console.error("Could not fetch challenges:", error);
@@ -27,7 +26,6 @@ const Challenges = ({ maxArea }) => {
         const matchingChallenge = challengesGroup.find(challenge => challenge.max_area === maxArea);
         console.log(challengesGroup)
         if (matchingChallenge) {
-            console.log("match")
             // If a matching challenge is found, set it as the selected challenge
             setSelectedChallenge(matchingChallenge);
           } else {
