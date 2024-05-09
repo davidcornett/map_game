@@ -3,11 +3,12 @@ import { useSelectedChallenge } from '../SelectedChallengeContext';
 import { formatGDP } from './EconomicInfo'; // Import the formatGDP function from EconomicInfo.js
 
 function toTitleCase(str) {
+  // return phrase in title case
   return str
-    .toLowerCase()  // First, make all characters lowercase
-    .split(' ')  // Split the string into an array of words
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // Capitalize the first character of each word
-    .join(' ');  // Join the words back into a string
+    .toLowerCase()  // make all characters lowercase
+    .split(' ')  // split the string into an array of words
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // capitalize 1st char of each word
+    .join(' ');  // join words back into string
 }
 
 const ChallengeResult = ({ userScore, maxArea }) => {
@@ -50,7 +51,7 @@ const ChallengeResult = ({ userScore, maxArea }) => {
       <h4 className='text-2xl font-bold text-customTeal'>Challenge Results</h4>
       <h3>{metricDisplay} Score: <span className="font-semibold text-customTeal">{userScore.toLocaleString()}</span></h3>
       <h3>Challenge: <span className="font-semibold text-customTeal">{selectedChallenge.name}</span></h3>
-      <h3>Allowed Area (sq. miles): <span className="font-semibold text-customTeal">{selectedChallenge.max_area.toLocaleString()}</span></h3>
+      <h3>Allowed Area (sq. miles): <span className="font-semibold text-customTeal">{maxArea.toLocaleString()}</span></h3> 
     </div>
   );
 };

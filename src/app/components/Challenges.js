@@ -22,17 +22,8 @@ const Challenges = ({ maxArea }) => {
         fetchChallenges();
     }, []);
 
-    const handleSelectChallenge = (challengesGroup) => {
-        const matchingChallenge = challengesGroup.find(challenge => challenge.max_area === maxArea);
-        console.log(challengesGroup)
-        if (matchingChallenge) {
-            // If a matching challenge is found, set it as the selected challenge
-            setSelectedChallenge(matchingChallenge);
-          } else {
-            // Optionally handle the case where no challenge matches the selectedMaxArea
-            console.error("No challenge found for the selected area size.");
-            // This might involve setting an error state, displaying a message to the user, etc.
-          }
+    const handleSelectChallenge = (challenge) => {
+        setSelectedChallenge(challenge);
     };
 
     // Function to determine image based on challenge criteria
@@ -118,17 +109,17 @@ const Challenges = ({ maxArea }) => {
         <div style={outerContainerStyle}>
             <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Select a Challenge</h2>
             <div style={buttonContainerStyle}>
-                {Object.entries(groupedChallenges).map(([name, challengesGroup]) => (
+            {challenges.map((challenge) => (
                     <button
-                        key={name}
-                        style={buttonStyle(name)} // Apply styling as before, using the first challenge for reference
-                        onClick={() => handleSelectChallenge(challengesGroup)} // Modify to handle group selection if needed
+                        key={challenge.name}
+                        style={buttonStyle(challenge.name)}
+                        onClick={() => handleSelectChallenge(challenge)}
                     >
-                        <span style={textStyle}>{name}</span>
-                        {getImageSrcForChallenge(challengesGroup[0].criteria.criteria_type) && (
+                        <span style={textStyle}>{challenge.name}</span>
+                        {getImageSrcForChallenge(challenge.criteria.criteria_type) && (
                             <img
-                                src={getImageSrcForChallenge(challengesGroup[0].criteria.criteria_type)}
-                                alt={name}
+                                src={getImageSrcForChallenge(challenge.criteria.criteria_type)}
+                                alt={challenge.name}
                                 style={imageStyle}
                             />
                         )}
