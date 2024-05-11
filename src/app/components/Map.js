@@ -69,6 +69,7 @@ const Map = () => {
   const fetchNationalParkData = async (selectedCountyIds) => {
     const url = `http://127.0.0.1:6205/get_national_parks`;
     const body = JSON.stringify({ selected_county_ids: selectedCountyIds });
+    setNationalParks(''); // Clear any previous national park data
 
     try {
       const response = await fetch(url, {
