@@ -351,8 +351,9 @@ const Map = () => {
   
   // Style for the submit button, keeping it similar to your size selection buttons
   const submitButtonStyle = {
-    backgroundColor: '#008080',
-    color: 'white',
+    backgroundColor: 'rgb(40, 44, 52)',
+    fontWeight: 'bold',
+    color: '#8fdaff',
     padding: '10px 20px',
     border: 'none',
     borderRadius: '5px',
@@ -366,8 +367,8 @@ const Map = () => {
 
   const parksButtonStyle = {
     position: 'absolute',
-    bottom: '20px',
-    left: '20px',
+    top: '20px',
+    left: '75px',
     zIndex: 1000, // Ensure it's above the map layers
     backgroundColor: '#C56C39',
     border: '1px solid #ccc',
@@ -404,7 +405,7 @@ const Map = () => {
 
       {!newCountry &&  (
       <div style={outerContainerStyle}>
-        <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Choose Country Size </h2>
+        <h2 className="text-4xl text-white" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Choose Country Size </h2>
 
         <div style={buttonContainerStyle}>
           {Object.entries(countrySizes).map(([size, { description, image, name }]) => (
@@ -450,10 +451,10 @@ const Map = () => {
         <button
           onClick={handleBuildClick}
           style={submitButtonStyle}
-          onMouseOver={e => e.target.style.backgroundColor = '#008080'} // lighter teal
-          onMouseOut={e => e.target.style.backgroundColor = '#006666'} // Back to original on mouse out
+          onMouseOver={e => e.target.style.backgroundColor = 'rgb(60, 66, 72)'} // lighter teal
+          onMouseOut={e => e.target.style.backgroundColor = 'rgb(40, 44, 52)'} // Back to original on mouse out
         >
-          BUILD COUNTRY
+          Click to Create Country
         </button>
       </div>
     )}
@@ -563,6 +564,7 @@ newCountry && (
           </div>
           )}
         </div>
+        
         </div>
 
         {/* NATIONAL PARKS LIST -----------------------------------------------------------------*/}
@@ -573,7 +575,9 @@ newCountry && (
         </>
       )}
       {mode === 'challenge' && (
-        <Leaderboard maxArea={maxArea}/>
+        <div className="p-4 md:p-6 lg:p-8">
+          <Leaderboard maxArea={maxArea}/>
+        </div>
         )}
       </div>
     </div>

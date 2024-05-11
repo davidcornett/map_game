@@ -23,7 +23,7 @@ const NationalPark = ({ park }) => {
       {isOpen && (
         <>
           <div className="p-4">
-            <p className="text-gray-500">{park.description}</p>
+            <p className="text-gray-500 text-left">{park.description}</p>
           </div>
           {park.images.length > 0 && (
             <img className="w-full" src={park.images[0].url} alt={park.images[0].altText} />

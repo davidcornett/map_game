@@ -107,7 +107,7 @@ const Challenges = ({ maxArea }) => {
 
     return (
         <div style={outerContainerStyle}>
-            <h2 className="text-4xl" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Select a Challenge</h2>
+            <h2 className="text-4xl text-white" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Select a Challenge</h2>
             <div style={buttonContainerStyle}>
             {challenges.map((challenge) => (
                     <button

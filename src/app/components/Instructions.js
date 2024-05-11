@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMode } from '../SelectedChallengeContext';
 
-
-
 const Instructions = () => {
     const { mode } = useMode();
 

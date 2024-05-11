@@ -37,22 +37,22 @@ const EconomicInfo = ({ newCountryStats }) => {
         <div className="max-w-lg mx-auto my-8 p-6 bg-customVeryDark rounded-lg shadow-md">
             <h2 className="text-2xl font-bold text-center text-white mb-6">Economics</h2>
 
-            <div className="max-w-md w-full mx-auto bg-blue-100 rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
+            <div className="max-w-md w-full mx-auto bg-customDark rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
                 <div className="p-4 flex justify-between items-center">
-                    <div className="uppercase tracking-wide text-sm text-gray-700 font-semibold">GDP: ${formatGDP(newCountryStats.gdp) || 'N/A'}</div>
+                    <div className="uppercase tracking-wide text-sm text-white font-semibold">GDP: ${formatGDP(newCountryStats.gdp) || 'N/A'}</div>
                 </div>
             </div>
 
 
-            <div className="max-w-md w-full mx-auto bg-blue-100 rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
+            <div className="max-w-md w-full mx-auto bg-customDark rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
                 <div className="p-4 flex justify-between items-center">
-                    <div className="uppercase tracking-wide text-sm text-gray-700 font-semibold">Per Capita Income: ${newCountryStats.perCapIncome.toLocaleString() || 'N/A'}</div>
+                    <div className="uppercase tracking-wide text-sm text-white font-semibold">Per Capita Income: ${newCountryStats.perCapIncome.toLocaleString() || 'N/A'}</div>
                 </div>
             </div>
 
-            <div className="max-w-md w-full mx-auto bg-blue-100 rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
+            <div className="max-w-md w-full mx-auto bg-customDark rounded-xl shadow-md overflow-hidden mb-4 md:w-full lg:max-w-md">
                 <div className="p-4 flex justify-between items-center">
-                    <div className="uppercase tracking-wide text-sm text-gray-700 font-semibold">Unemployment Rate: {newCountryStats.unemploymentRate || 'N/A'}%</div>
+                    <div className="uppercase tracking-wide text-sm text-white font-semibold">Unemployment Rate: {newCountryStats.unemploymentRate || 'N/A'}%</div>
                 </div>
             </div>
         </div>
