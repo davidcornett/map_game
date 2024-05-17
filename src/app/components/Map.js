@@ -112,23 +112,36 @@ const Map = () => {
     }
   };
 
+  // handle area updates each time selectedCounties changes
+  useEffect(() => {
+    const updateArea = async () => {
+      if (currentCountyID === null) return;
+
+      const area = await fetchArea(currentCountyID);
+      setArea((prevArea) => {
+        if (selectedCounties.has(currentCountyID)) {
+          // Newly added, increment the area
+          return prevArea + area;
+        } else {
+          // Previously added, now removed, subtract the area
+          return prevArea - area;
+        }
+      });
+    };
+    updateArea();
+  }, [selectedCounties]);
+
   const toggleCountySelection = async (countyId) => {
-    const area = await fetchArea(countyId);
 
     setSelectedCounties(prevSelected => {
       const newSelected = new Set(prevSelected);
-      let newTotalArea = area;
 
       // DESELECT if already selected - subtract area, clear formatting, remove from array, and decrement counter
       if (newSelected.has(countyId)) {
-        //setArea(5);
-        setArea(prevArea => prevArea - newTotalArea);
         newSelected.delete(countyId);
       
       // SELECT if not selected yet - add area, apply special formatting, add to array, and increment counter
       } else {
-        //setArea(25);
-        setArea(prevArea => prevArea + newTotalArea);
         newSelected.add(countyId);
       }
 
@@ -216,9 +229,11 @@ const Map = () => {
       getCountry(Array.from(selectedCounties));
 
       // only fetch nps data in sandbox mode
+      /*
       if (mode === 'sandbox'){
         fetchNationalParkData(Array.from(selectedCounties));
       }
+      */
 
       setCountryName(''); 
       setDisplayName('');
