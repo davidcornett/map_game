@@ -48,6 +48,7 @@ const Map = () => {
 
   // states for country size and adjacency validation
   const [validationMessages, setValidationMessages] = useState([]);
+  const [sizeWarning, setSizeWarning] = useState(false);
 
   // states for new country stats
   const [countryStats, setCountryStats] = useState({});
@@ -112,23 +113,36 @@ const Map = () => {
     }
   };
 
+  // handle area updates each time selectedCounties changes
+  useEffect(() => {
+    const updateArea = async () => {
+      if (currentCountyID === null) return;
+
+      const area = await fetchArea(currentCountyID);
+      setArea((prevArea) => {
+        if (selectedCounties.has(currentCountyID)) {
+          // Newly added, increment the area
+          return prevArea + area;
+        } else {
+          // Previously added, now removed, subtract the area
+          return prevArea - area;
+        }
+      });
+    };
+    updateArea();
+  }, [selectedCounties]);
+
   const toggleCountySelection = async (countyId) => {
-    const area = await fetchArea(countyId);
 
     setSelectedCounties(prevSelected => {
       const newSelected = new Set(prevSelected);
-      let newTotalArea = area;
 
       // DESELECT if already selected - subtract area, clear formatting, remove from array, and decrement counter
       if (newSelected.has(countyId)) {
-        //setArea(5);
-        setArea(prevArea => prevArea - newTotalArea);
         newSelected.delete(countyId);
       
       // SELECT if not selected yet - add area, apply special formatting, add to array, and increment counter
       } else {
-        //setArea(25);
-        setArea(prevArea => prevArea + newTotalArea);
         newSelected.add(countyId);
       }
 
@@ -191,6 +205,11 @@ const Map = () => {
   };
 
   const handleSizeSelection = (size) => {
+    if (size === 'large' || size === 'medium') {
+      setSizeWarning(true);
+    } else {
+      setSizeWarning(false);
+    }
     setSelectedSize(size);
     setMaxArea(countrySizes[size].maxSize);
   };
@@ -216,9 +235,11 @@ const Map = () => {
       getCountry(Array.from(selectedCounties));
 
       // only fetch nps data in sandbox mode
+      /*
       if (mode === 'sandbox'){
         fetchNationalParkData(Array.from(selectedCounties));
       }
+      */
 
       setCountryName(''); 
       setDisplayName('');
@@ -419,24 +440,29 @@ const Map = () => {
             </button>
           ))}
         </div>
+        {sizeWarning && (
+          <span className="text-customBlue mb-2 text-center">
+            Warning: Creating larger countries can take several seconds to load.
+          </span>
+        )}
+
       </div>
     )}
 
     {/* CHALLENGE MODE SELECTION (if applicable) ------------------------------------------------*/}
     {mode === 'challenge' && !newCountry && <Challenges maxArea={maxArea} />}
 
-
     {/* NEW COUNTRY NAME AND SUBMIT BUTTON -----------------------------------------------------*/}
-    { (mode === 'sandbox' || selectedChallenge) && !newCountry && (
-      <div style={submitContainerStyle}>
-        <input
-          type="text"
-          placeholder="Enter country name (optional)"
-          value={countryName}
-          onChange={(e) => setCountryName(e.target.value)}
-          style={inputStyle}
-        />
-    
+      { (mode === 'sandbox' || selectedChallenge) && !newCountry && (
+        <div style={submitContainerStyle}>
+          <input
+            type="text"
+            placeholder="Enter country name (optional)"
+            value={countryName}
+            onChange={(e) => setCountryName(e.target.value)}
+            style={inputStyle}
+          />
+      
         {/* DISPLAY NAME INPUT FOR LEADERBOARD (if applicable) --------------------------------------*/}
         {selectedChallenge && (
         <input
@@ -479,6 +505,7 @@ const Map = () => {
         </div>
       )}
     </div>
+
 
     {/* MAP DISPLAY -----------------------------------------------------------------------------*/}
     {!newCountry && ( mode === 'sandbox' || selectedChallenge) && (

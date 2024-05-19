@@ -4,6 +4,7 @@ import Image from 'next/image'; // Import Next.js Image component
 import Map from './components/Map';
 import Instructions from "./components/Instructions";
 import ModeSelection from './components/ModeSelection';
+import Footer from './components/Footer';
 import { SelectedChallengeProvider, useSelectedChallenge, NewCountryProvider, useNewCountry, ModeProvider, RefreshProvider } from './SelectedChallengeContext';
 
 export default function setChallengeContext() {
@@ -20,18 +21,17 @@ export default function setChallengeContext() {
   );
 }
 
+const LogoText = () => (
+  <div className="flex flex-col items-center font-raleway">
+    <div className="text-white">Border</div>
+    <div className="w-5/6 border-t-2 border-dashed my-0.25"></div>
+    <div className="text-[#8fdaff] font-bold">Canvas</div>
+  </div>
+);
+
+
 function Home() {
-  const { selectedChallenge } = useSelectedChallenge(); 
   const { newCountry, setNewCountry } = useNewCountry();
-
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between', // place child components on opposite ends of the container
-    alignItems: 'center', // aligns items at  start of the cross axis
-    flexWrap: 'wrap', // wrap for smaller screens
-    padding: '20px', // padding around entire container
-
-  };
 
   // Style for the Instructions card to control its width and margin
   const instructionsStyle = {
@@ -60,20 +60,29 @@ function Home() {
         )}
 
         {/* Logo and Mode Selection Container */}
-        <div className="w-full md:w-1/3 lg:w-1/4 flex flex-col items-center space-y-4">
+        <div className={`w-full md:w-1/3 lg:w-1/4 ${newCountry ? 'flex flex-row justify-between items-center space-x-8' : 'flex flex-col items-center space-y-4'}`}>
+          {/* colors: darkyellow #D3D553  green #008080 paleblue #06cfea darkblue #008dd5  lightblue #8fdaff */}
           
-          {/* Logo */}
-          {!newCountry && (
-          <div className="flex justify-center">
-            <Image 
-              src="/logo3.png" 
-              alt="Logo"
-              width={200} 
-              height={200} 
-            />
-          </div>
-          )}
+          <div className={`flex ${newCountry ? 'flex-row items-center space-x-4' : 'justify-center text-5xl items-center'}`}>
+            {!newCountry && (
+            <>
+              <LogoText />
+              <Image 
+                src="/logo3.png" 
+                alt="Logo"
+                width={150} 
+                height={150} 
+              />
+            </>
+            )}
 
+            {newCountry && (
+              <div className="text-5xl">
+                <LogoText />
+              </div>
+            )}
+          </div>
+          
           {/* Mode Selection Component Always Visible */}
           <div className="w-full">
             <ModeSelection/>
@@ -81,10 +90,14 @@ function Home() {
         </div>
       </div>
 
+
       {/* Map Component */}
       <div> 
         <Map/>
       </div>
+
+      {/* Footer Component */}
+      <Footer />
     </>
 );
 }

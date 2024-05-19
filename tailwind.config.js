@@ -21,11 +21,12 @@ module.exports = {
       colors: {
         customTeal: '#008080',
         customDark: '#3C4248',
-        customVeryDark: 'rgb(20, 22, 28)'
+        customVeryDark: 'rgb(20, 22, 28)',
+        customBlue: '#8fdaff'
       },
       fontFamily: {
         //'mono': ['Roboto Mono', 'Monaco', 'Consolas', 'Courier New', 'monospace']
-        'mono': ['Consolas', 'Courier New', 'monospace']
+        'mono': ['Consolas', 'Courier New', 'monospace'],
       },
     },
   },
