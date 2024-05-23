@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
 
+const baseURL = process.env.NEXT_PUBLIC_BORDER_CANVAS_BASE_URL;
+
 const Leaderboard = ({ maxArea }) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const { selectedChallenge } = useSelectedChallenge(); // Access the selected challenge from context
 
   const getLeaderboard = async () => {
     if (!selectedChallenge) return; // Ensure there is a selected challenge
-    console.log(selectedChallenge)
 
     try {
       // Adjusted to use selectedChallenge from context
@@ -15,9 +16,8 @@ const Leaderboard = ({ maxArea }) => {
         name: selectedChallenge.name,
         maxArea: maxArea
       });
-      console.log(maxArea);
 
-      const response = await fetch(`http://127.0.0.1:6205/leaderboard?${params.toString()}`, {
+      const response = await fetch(`${baseURL}/leaderboard?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',

@@ -70,10 +70,8 @@ export const RefreshProvider = ({ children }) => {
         }
     };
     
-    
     const fetchParkGeoJsonData = async () => {
         if (!geoJsonParkData) {  // Fetch only if park data is not already loaded
-            console.log("loading nps data");
             try {
                 const response = await fetch('/nps_boundary.geojson');
                 const data = await response.json();

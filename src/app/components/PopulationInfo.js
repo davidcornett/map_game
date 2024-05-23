@@ -6,7 +6,6 @@ const PopulationInfo = ({ newCountryStats }) => {
     const [isComparisonsOpen, setComparisonsIsOpen] = useState(false);
 
     const similarCountriesData = newCountryStats.similarCountries || [];
-    console.log(similarCountriesData);
 
     return (
         <div className="max-w-lg mx-auto my-8 p-6 bg-customVeryDark rounded-lg shadow-md">

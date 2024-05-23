@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
 
+const baseURL = process.env.NEXT_PUBLIC_BORDER_CANVAS_BASE_URL;
+
 const Challenges = ({ maxArea }) => {
     const [challenges, setChallenges] = useState([]);
     const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
@@ -8,7 +10,7 @@ const Challenges = ({ maxArea }) => {
     useEffect(() => {
         const fetchChallenges = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:6205/challenges`);
+            const response = await fetch(`${baseURL}/challenges`);
             if (!response.ok) {
             throw new Error('Network response was not ok');
             }
@@ -41,8 +43,6 @@ const Challenges = ({ maxArea }) => {
     // Button style based on whether the challenge is selected
     const buttonStyle = (challengeName) => ({
         backgroundColor: selectedChallenge && selectedChallenge.name === challengeName ? 'rgb(60, 66, 72)' : 'rgb(40, 44, 52)',
-        //backgroundColor: selectedChallenge && selectedChallenge.challenge_id === challenge.challenge_id ? 'rgb(40, 44, 52)' : '#05386B',
-
         color: 'white',
         padding: '1em 1.2em',
         border: 'none',
@@ -71,10 +71,6 @@ const Challenges = ({ maxArea }) => {
 
     const outerContainerStyle = {
         backgroundColor: 'rgb(20, 22, 28)',
-        //backgroundColor: '#333',
-        //backgroundColor: '#5CDB95', // Less dark background color
-        //backgroundColor: '#05386B',
-        //backgroundColor: '#659DBD',
         borderRadius: '10px', // Rounded edges for the container
         padding: '20px', // Padding inside the container, around the heading and buttons
         margin: '20px auto', // Margin for top, bottom, and auto on the sides for center alignment

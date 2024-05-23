@@ -12,6 +12,8 @@ import NationalParksList from './NationalParksList';
 import CountryShape from './CountryShape';
 import Leaderboard from './Leaderboard';
 
+const baseURL = process.env.NEXT_PUBLIC_BORDER_CANVAS_BASE_URL;
+
 const countrySizes = {
   small: {
     maxSize: 25000, // Example max size for a small country in square miles
@@ -68,7 +70,7 @@ const Map = () => {
   }, [mode]);
 
   const fetchNationalParkData = async (selectedCountyIds) => {
-    const url = `http://127.0.0.1:6205/get_national_parks`;
+    const url = `${baseURL}/get_national_parks`;
     const body = JSON.stringify({ selected_county_ids: selectedCountyIds });
     setNationalParks(''); // Clear any previous national park data
 
@@ -102,7 +104,7 @@ const Map = () => {
   };
 
   const fetchArea = async (countyId) => {
-    const url = `http://127.0.0.1:6205/get_area/${countyId}`;
+    const url = `${baseURL}/get_area/${countyId}`;
     try {
       const response = await fetch(url);
       const data = await response.json();
@@ -250,7 +252,7 @@ const Map = () => {
     const statKey = getStatKeyForCriteria(selectedChallenge?.criteria?.criteria_type);
 
     try {
-      const url = `http://127.0.0.1:6205/get_new_country`;
+      const url = `${baseURL}/get_new_country`;
       const body = JSON.stringify({ 
         selected_county_ids: selectedCountyIds,
         maxArea: maxArea,
