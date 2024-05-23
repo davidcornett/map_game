@@ -60,9 +60,7 @@ function Home() {
         )}
 
         {/* Logo and Mode Selection Container */}
-        <div className={`w-full md:w-1/3 lg:w-1/4 ${newCountry ? 'flex flex-row justify-between items-center space-x-8' : 'flex flex-col items-center space-y-4'}`}>
-          {/* colors: darkyellow #D3D553  green #008080 paleblue #06cfea darkblue #008dd5  lightblue #8fdaff */}
-          
+        <div className={`w-full md:w-1/3 lg:w-1/4 ${newCountry ? 'flex flex-row justify-between items-center space-x-8' : 'flex flex-col items-center space-y-4'}`}>          
           <div className={`flex ${newCountry ? 'flex-row items-center space-x-4' : 'justify-center text-5xl items-center'}`}>
             {!newCountry && (
             <>

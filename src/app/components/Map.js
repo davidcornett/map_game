@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
+//import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import SelectedInfo from './SelectedInfo';
 import PopulationInfo from './PopulationInfo';
@@ -11,6 +11,12 @@ import { useSelectedChallenge, useNewCountry, useMode, useRefresh } from '../Sel
 import NationalParksList from './NationalParksList';
 import CountryShape from './CountryShape';
 import Leaderboard from './Leaderboard';
+import dynamic from 'next/dynamic';
+
+// dynamic imports to prevent window is not defined error
+const MapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then((mod) => mod.TileLayer), { ssr: false });
+const GeoJSON = dynamic(() => import('react-leaflet').then((mod) => mod.GeoJSON), { ssr: false });
 
 const baseURL = process.env.NEXT_PUBLIC_BORDER_CANVAS_BASE_URL;
 
