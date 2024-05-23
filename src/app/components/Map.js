@@ -237,11 +237,9 @@ const Map = () => {
       getCountry(Array.from(selectedCounties));
 
       // only fetch nps data in sandbox mode
-      /*
       if (mode === 'sandbox'){
         fetchNationalParkData(Array.from(selectedCounties));
       }
-      */
 
       setCountryName(''); 
       setDisplayName('');
