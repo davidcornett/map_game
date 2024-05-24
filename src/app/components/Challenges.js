@@ -15,6 +15,7 @@ const Challenges = ({ maxArea }) => {
             throw new Error('Network response was not ok');
             }
             const data = await response.json();
+            console.log(data)
             setChallenges(data);
         } catch (error) {
             console.error("Could not fetch challenges:", error);
@@ -34,7 +35,9 @@ const Challenges = ({ maxArea }) => {
         case 'gdp':
             return '/coins.svg';
         case 'population':
-            return '/city.svg'; // Replace with your actual SVG file for population
+            return '/city.svg'; 
+        case 'per_capita_income':
+            return '/mansion.svg';
         default:
             return null; // No image for unmatched criteria
         }

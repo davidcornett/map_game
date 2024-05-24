@@ -6,6 +6,7 @@ function toTitleCase(str) {
   // return phrase in title case
   return str
     .toLowerCase()  // make all characters lowercase
+    .replace(/_/g, ' ')  // replace underscores with spaces
     .split(' ')  // split the string into an array of words
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))  // capitalize 1st char of each word
     .join(' ');  // join words back into string
@@ -15,19 +16,7 @@ const ChallengeResult = ({ userScore, maxArea }) => {
   const { selectedChallenge } = useSelectedChallenge(); // Access the selected challenge from context
 
   // Dynamic metric display based on selectedChallenge
-  const metricDisplay = toTitleCase(selectedChallenge?.criteria?.criteria_type.toUpperCase() || 'SCORE');
-
-  function displayScore(score) {
-    // Check if the challenge is a GDP challenge
-    if (selectedChallenge.criteria.criteria_type === 'gdp') {
-      // Format the score as GDP
-      return formatGDP(score);
-    } else {
-      // For other types of scores, return as is or format differently
-      return score.toLocaleString(); // Basic formatting to include commas in large numbers
-    }
-  }
-  
+  const metricDisplay = toTitleCase(selectedChallenge?.criteria?.criteria_type.toUpperCase() || 'SCORE');  
 
   return (
     <div style={{

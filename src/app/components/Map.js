@@ -414,7 +414,7 @@ const Map = () => {
   const getStatKeyForCriteria = (criteriaType) => {
     const criteriaToStatKeyMap = {
       population: 'total_population',
-      perCapIncome: 'perCapIncome',
+      per_capita_income: 'per_capita_income',
       unemploymentRate: 'unemploymentRate',
       gdp: 'gdp',
       // todo - add more as needed
