@@ -5,7 +5,7 @@ const baseURL = process.env.NEXT_PUBLIC_BORDER_CANVAS_BASE_URL;
 
 const Challenges = ({ maxArea }) => {
     const [challenges, setChallenges] = useState([]);
-    const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
+    const { selectedChallenge, setSelectedChallenge, requiredPopulation, setRequiredPopulation } = useSelectedChallenge();
 
     useEffect(() => {
         const fetchChallenges = async () => {
@@ -27,6 +27,9 @@ const Challenges = ({ maxArea }) => {
 
     const handleSelectChallenge = (challenge) => {
         setSelectedChallenge(challenge);
+        if (challenge.criteria.min_pop) {
+            setRequiredPopulation(challenge.criteria.min_pop);
+        }
     };
 
     // Function to determine image based on challenge criteria
@@ -114,7 +117,20 @@ const Challenges = ({ maxArea }) => {
                         style={buttonStyle(challenge.name)}
                         onClick={() => handleSelectChallenge(challenge)}
                     >
-                        <span style={textStyle}>{challenge.name}</span>
+                        <div style={textStyle}>
+                            <span>{challenge.name}</span>
+
+                            {/* other challenge criteria if applicable */}
+                            <div>
+
+                                {challenge.criteria.min_pop && (
+                                    <p style={{margin: 0, fontSize: 12}}> Min. Population: {challenge.criteria.min_pop.toLocaleString()}</p>
+                                )}
+                            </div>
+                        </div>
+
+
+
                         {getImageSrcForChallenge(challenge.criteria.criteria_type) && (
                             <img
                                 src={getImageSrcForChallenge(challenge.criteria.criteria_type)}
