@@ -34,6 +34,7 @@ const Challenges = ({ maxArea }) => {
 
     // Function to determine image based on challenge criteria
     const getImageSrcForChallenge = (criteriaType) => {
+        console.log("getting challenge image")
         switch (criteriaType) {
         case 'gdp':
             return '/coins.svg';
