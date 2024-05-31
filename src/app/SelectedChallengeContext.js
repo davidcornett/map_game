@@ -4,9 +4,10 @@ const SelectedChallengeContext = createContext();
 export const useSelectedChallenge = () => useContext(SelectedChallengeContext);
 export const SelectedChallengeProvider = ({ children }) => {
     const [selectedChallenge, setSelectedChallenge] = useState(null);
+    const [requiredPopulation, setRequiredPopulation] = useState(0);
 
     return (
-        <SelectedChallengeContext.Provider value={{ selectedChallenge, setSelectedChallenge }}>
+        <SelectedChallengeContext.Provider value={{ selectedChallenge, setSelectedChallenge, requiredPopulation, setRequiredPopulation }}>
             {children}
         </SelectedChallengeContext.Provider>
     );
@@ -47,6 +48,7 @@ export const RefreshProvider = ({ children }) => {
     const [showParks, setShowParks] = useState(false);
     const [selectedCounties, setSelectedCounties] = useState(new Set());
     const [area, setArea] = useState(0);
+    const [population, setPopulation] = useState(0);
     const [countryName, setCountryName] = useState('');
 
     const refresh = () => {
@@ -55,6 +57,7 @@ export const RefreshProvider = ({ children }) => {
         setShowParks(false);
         setSelectedCounties(new Set());
         setArea(0);
+        setPopulation(0);
         setCountryName('');
         fetchCountyGeoJsonData();
         fetchParkGeoJsonData();
@@ -98,6 +101,8 @@ export const RefreshProvider = ({ children }) => {
         setSelectedCounties,
         area,
         setArea,
+        population,
+        setPopulation,
         refresh,
         fetchParkGeoJsonData,
         fetchCountyGeoJsonData,

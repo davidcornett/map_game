@@ -42,7 +42,7 @@ const countrySizes = {
 };
 
 const Map = () => {
-  const { refresh, geoJsonData, geoJsonParkData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea, showParks, setShowParks, countryName, setCountryName } = useRefresh();
+  const { refresh, geoJsonData, geoJsonParkData, setGeoJsonData, selectedCounties, setSelectedCounties, area, setArea, population, setPopulation, showParks, setShowParks, countryName, setCountryName } = useRefresh();
 
   const { newCountry, setNewCountry } = useNewCountry();
   const [selectedSize, setSelectedSize] = useState('small');
@@ -60,7 +60,7 @@ const Map = () => {
 
   // states for new country stats
   const [countryStats, setCountryStats] = useState({});
-  const { selectedChallenge, setSelectedChallenge } = useSelectedChallenge();
+  const { selectedChallenge, requiredPopulation } = useSelectedChallenge();
   const [displayName, setDisplayName] = useState('');
   const [userScore, setUserScore] = useState(null);
 
@@ -73,7 +73,7 @@ const Map = () => {
     refresh();
     setValidationMessages([]); // Clear any previous validation messages
   
-  }, [mode]);
+  }, [mode, selectedChallenge]);
 
   const fetchNationalParkData = async (selectedCountyIds) => {
     const url = `${baseURL}/get_national_parks`;
@@ -121,6 +121,56 @@ const Map = () => {
     }
   };
 
+  const fetchPopulation = async (countyId) => {
+    const url = `${baseURL}/get_pop/${countyId}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log(data)
+      return data; // Assuming this returns the population directly
+    } catch (error) {
+      console.error('Error fetching population data:', error);
+      return 0; // Return 0 in case of error
+    }
+  };
+
+  // Display current stats in the info indicator
+  useEffect(() => {
+    const updateMetrics = async () => {
+      if (currentCountyID === null) return;
+  
+      const area = await fetchArea(currentCountyID);
+      setArea((prevArea) => {
+        if (selectedCounties.has(currentCountyID)) {
+          // Newly added, increment the area
+          return prevArea + area;
+        } else {
+          // Previously added, now removed, subtract the area
+          return prevArea - area;
+        }
+      });
+  
+      // Only fetch and update population if the mode is 'challenge' and the current challenge has min_pop criteria
+      if (mode === 'challenge' && selectedChallenge?.criteria?.min_pop) {
+        const population = await fetchPopulation(currentCountyID);
+        setPopulation((prevPopulation) => {
+          if (selectedCounties.has(currentCountyID)) {
+            // Newly added, increment the population
+            return prevPopulation + population;
+          } else {
+            // Previously added, now removed, subtract the population
+            return prevPopulation - population;
+          }
+        });
+      }
+    };
+  
+    updateMetrics();
+  }, [selectedCounties]);
+
+
+
+  /*
   // handle area updates each time selectedCounties changes
   useEffect(() => {
     const updateArea = async () => {
@@ -139,6 +189,7 @@ const Map = () => {
     };
     updateArea();
   }, [selectedCounties]);
+  */
 
   const toggleCountySelection = async (countyId) => {
 
@@ -233,6 +284,11 @@ const Map = () => {
     // Handle empty country case
     if (selectedCounties.size === 0) {
       messages.push('Please select at least one county to build your country.');
+    }
+
+    // Handle min population requirement for income challenge
+    if (mode === 'challenge' && selectedChallenge?.criteria?.min_pop && population < requiredPopulation) {
+      messages.push('Please increase the population to at least' + requiredPopulation.toLocaleString() + ' to attempt this challenge.'); 
     }
   
     // Future validation checks can add more messages here...
@@ -414,7 +470,7 @@ const Map = () => {
   const getStatKeyForCriteria = (criteriaType) => {
     const criteriaToStatKeyMap = {
       population: 'total_population',
-      perCapIncome: 'perCapIncome',
+      per_capita_income: 'per_capita_income',
       unemploymentRate: 'unemploymentRate',
       gdp: 'gdp',
       // todo - add more as needed
@@ -536,7 +592,7 @@ const Map = () => {
       )}
 
       {/* Display mouseover info and selected counties--------------------------------------------*/}
-      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} showParks={showParks} selectedPark={currentPark}/>
+      <SelectedInfo selectedCounty={currentCounty} selectedCount={selectedCounties.size} totalArea={area} maxArea={maxArea} totalPop={population} requiredPop={requiredPopulation} showParks={showParks} selectedPark={currentPark}/>
 
       {/* Show National Parks button (sandbox only)-----------------------------------------------*/}
       {mode === 'sandbox' && (

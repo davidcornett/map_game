@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, showParks, selectedPark }) => {
+const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, totalPop, requiredPop, showParks, selectedPark }) => {
     return (
     <div style={{
     position: 'absolute',
@@ -57,6 +57,21 @@ const SelectedInfo = ({ selectedCounty, selectedCount, totalArea, maxArea, showP
             Warning: Area exceeds limit!
             </span>
         )}
+        {totalPop > 0 && (
+            <>
+            <div>
+                Total Population: <span style={{ fontWeight: 'bold'}}>
+                {totalPop.toLocaleString()}
+                </span>
+            </div>
+            <div>
+                Required Population: <span style={{ fontWeight: 'bold'}}>
+                    {requiredPop.toLocaleString()}
+                </span>
+            </div>
+            </>
+        )
+        }
     </div>
 
     </div>
