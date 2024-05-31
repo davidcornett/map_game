@@ -30,8 +30,7 @@ const countrySizes = {
   medium: {
     maxSize: 100000,
     description: "Up to 100,000 square miles",
-    //image: "/vietnam-green.svg",
-    image: "/mansion.svg",
+    image: "/vietnam-green.svg",
     name: "Vietnam (medium)"
   },
   large: {

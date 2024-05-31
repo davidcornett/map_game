@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelectedChallenge } from '../SelectedChallengeContext';
+import Image from 'next/image';
+import Head from 'next/head';
 
 const baseURL = process.env.NEXT_PUBLIC_BORDER_CANVAS_BASE_URL;
 
@@ -98,17 +100,14 @@ const Challenges = ({ maxArea }) => {
     width: '100%', // Take the full width of the outer container
     };
 
-    const groupedChallenges = challenges.reduce((acc, challenge) => {
-        // Initialize the array for the challenge name if it doesn't already exist
-        if (!acc[challenge.name]) {
-            acc[challenge.name] = [];
-        }
-        // Add the challenge to its respective group
-        acc[challenge.name].push(challenge);
-        return acc;
-    }, {});
-
     return (
+        <>
+        <Head>
+        <link rel="preload" href="/coins.svg" as="image" />
+        <link rel="preload" href="/city.svg" as="image" />
+        <link rel="preload" href="/mansion.svg" as="image" />
+        </Head> 
+
         <div style={outerContainerStyle}>
             <h2 className="text-4xl text-white" style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>Select a Challenge</h2>
             <div style={buttonContainerStyle}>
@@ -123,26 +122,29 @@ const Challenges = ({ maxArea }) => {
 
                             {/* other challenge criteria if applicable */}
                             <div>
-
                                 {challenge.criteria.min_pop && (
                                     <p style={{margin: 0, fontSize: 12}}> Min. Population: {challenge.criteria.min_pop.toLocaleString()}</p>
                                 )}
                             </div>
                         </div>
 
-
-
+                        
                         {getImageSrcForChallenge(challenge.criteria.criteria_type) && (
-                            <img
-                                src={getImageSrcForChallenge(challenge.criteria.criteria_type)}
-                                alt={challenge.name}
-                                style={imageStyle}
-                            />
+                            <div style={{ position: 'relative', width: '3em', height: '3em', marginLeft: '1em' }}>
+                                <Image
+                                    src={getImageSrcForChallenge(challenge.criteria.criteria_type)}
+                                    alt={challenge.name}
+                                    layout="fill"
+                                    objectFit="contain"
+                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                />
+                            </div>
                         )}
                     </button>
                 ))}
             </div>
         </div>
+        </>
     );
     
 
