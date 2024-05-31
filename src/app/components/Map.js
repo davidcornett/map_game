@@ -285,6 +285,11 @@ const Map = () => {
     if (selectedCounties.size === 0) {
       messages.push('Please select at least one county to build your country.');
     }
+
+    // Handle min population requirement for income challenge
+    if (mode === 'challenge' && selectedChallenge?.criteria?.min_pop && population < requiredPopulation) {
+      messages.push('Please increase the population to at least' + requiredPopulation.toLocaleString() + ' to attempt this challenge.'); 
+    }
   
     // Future validation checks can add more messages here...
     setValidationMessages(messages);
