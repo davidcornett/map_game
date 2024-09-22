@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image'; // Import Next.js Image component
 import Map from './components/Map';
 import Instructions from "./components/Instructions";
@@ -21,6 +21,8 @@ export default function setChallengeContext() {
   );
 }
 
+const baseURL = process.env.NEXT_PUBLIC_BORDER_CANVAS_BASE_URL;
+
 const LogoText = () => (
   <div className="flex flex-col items-center font-raleway">
     <div className="text-white">Border</div>
@@ -32,6 +34,21 @@ const LogoText = () => (
 
 function Home() {
   const { newCountry, setNewCountry } = useNewCountry();
+
+  // pre-warm Neon DB
+  useEffect(() => {
+    const url = `${baseURL}wake_neon`;
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          console.error('Warm-up request failed:', response.statusText);
+        }
+      })
+      .catch((error) => {
+        console.error('Warm-up request error:', error);
+      });
+  }, []); // run once on mount
 
   // Style for the Instructions card to control its width and margin
   const instructionsStyle = {
