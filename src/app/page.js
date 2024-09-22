@@ -37,7 +37,7 @@ function Home() {
 
   // pre-warm Neon DB
   useEffect(() => {
-    const url = `${baseURL}wake_neon`;
+    const url = `${baseURL}/wake_neon`;
 
     fetch(url)
       .then((response) => {
