@@ -113,6 +113,7 @@ function Home() {
 
       {/* Footer Component */}
       <Footer />
+
     </>
 );
 }
