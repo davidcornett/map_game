@@ -44,7 +44,7 @@ const Leaderboard = ({ maxArea }) => {
 
     <div className="flex justify-center items-center text-gray-800 p-4 bg-white rounded-lg shadow-md">
         <div className="w-full max-w-xl mx-auto">
-            <h4 className="text-center text-2xl font-bold">Top 10 Leaderboard</h4>
+            <h4 className="text-center text-2xl font-bold">Top 5 Leaderboard</h4>
             <table className="w-full max-w-xl text-left border-collapse">
                 <thead>
                     <tr>
@@ -55,7 +55,7 @@ const Leaderboard = ({ maxArea }) => {
                     </tr>
                 </thead>
                 <tbody className="divide-y-4 divide-white bg-blue-100 font-mono font-semibold">
-                    {leaderboard.slice(0, 10).map((entry, index) => (
+                    {leaderboard.slice(0, 5).map((entry, index) => (
                         <tr key={index}>
                             <td className="px-4 py-2">{index + 1}</td>
                             <td className="px-4 py-2 text-right">{entry.score.toLocaleString()}</td>
