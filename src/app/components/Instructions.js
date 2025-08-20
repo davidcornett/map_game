@@ -19,6 +19,14 @@ const Instructions = () => {
         paddingBottom: '10px', // Space below the heading
     };
 
+    const surveyStyle = {
+        marginTop: '20px',
+        padding: '12px',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderRadius: '6px',
+        border: '1px solid rgba(59, 130, 246, 0.3)',
+    };
+
     return (
         <div> 
             <div style={cardStyle}>
@@ -44,7 +52,39 @@ const Instructions = () => {
                 </ul>
                 </>
             )}
+            <div style={surveyStyle}>
+            <div
+                style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px',
+                flexWrap: 'wrap', // keeps things tidy on small screens
+                }}
+            >
+                <p style={{ margin: 0, fontSize: '15px' }}>
+                Help shape the future of BorderCanvas!
+                </p>
+                <a
+                href="https://www.surveymonkey.com/r/XJXX7CH"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                    display: 'inline-block',
+                    padding: '10px 16px',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    borderRadius: '6px',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap',
+                }}
+                >
+                Vote on the next improvement
+                </a>
             </div>
+            </div>
+        </div>
 
         </div>
     );
