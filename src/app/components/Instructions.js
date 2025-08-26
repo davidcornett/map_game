@@ -38,8 +38,8 @@ const Instructions = () => {
                 <>
                 <h2 className="text-5xl font-bold" style={headingStyle}>NOTE: BorderCanvas will be offline until 9/1</h2>
                 <ul>
-                    <li>Unfortunately, I've run out of compute hours for my server (hosted by Render)</li>
-                    <li>Please consider donating a small sum to help me upgrade plans. I'm developing this site as a hobby with no advertising/cookies/etc. </li>
+                    <li>Unfortunately, I have run out of compute hours for my server (hosted by Render)</li>
+                    <li>Please consider donating a small sum to help me upgrade plans. I am developing this site as a hobby with no advertising/cookies/etc. </li>
                 </ul>
                 </>
             )}
