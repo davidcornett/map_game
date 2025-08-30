@@ -29,8 +29,22 @@ const Instructions = () => {
 
     return (
         <div> 
+
+  
+
             <div style={cardStyle}>
-            {mode === 'sandbox' && (
+
+            {(
+                <>
+                <h2 className="text-5xl font-bold" style={headingStyle}>NOTE: BorderCanvas will be offline until 9/1</h2>
+                <ul>
+                    <li>Unfortunately, I have run out of compute hours for my server (hosted by Render)</li>
+                    <li>Please consider donating a small sum to help me upgrade plans. I am developing this site as a hobby with no advertising/cookies/etc. </li>
+                </ul>
+                </>
+            )}
+            
+            {mode === 'sandbox' && 1 == 0 && (
                 <>
                 <h2 className="text-5xl font-bold" style={headingStyle}>Build your country from a unique canvas - US counties.</h2>
                 <ul>
@@ -41,7 +55,7 @@ const Instructions = () => {
                 </>
             )}
 
-            {mode === 'challenge' && (
+            {mode === 'challenge' && 1==0 && (
                 <>
                 <h2 className="text-5xl font-bold" style={headingStyle}>Challenge the leaderboard.</h2>
                 <ul>
