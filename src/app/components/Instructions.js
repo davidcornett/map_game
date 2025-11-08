@@ -63,25 +63,12 @@ const Instructions = () => {
                 }}
             >
                 <p style={{ margin: 0, fontSize: '15px' }}>
-                Help shape the future of BorderCanvas!
+                Thank you for your survey responses! 
                 </p>
-                <a
-                href="https://www.surveymonkey.com/r/XJXX7CH"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                    display: 'inline-block',
-                    padding: '10px 16px',
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    borderRadius: '6px',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    whiteSpace: 'nowrap',
-                }}
-                >
-                Vote on the next improvement
-                </a>
+                <p>
+                Coming next: Build a new country in Europe
+                </p>
+
             </div>
             </div>
         </div>
